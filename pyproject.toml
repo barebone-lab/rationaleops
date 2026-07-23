@@ -1,0 +1,9 @@
+[project]
+name = "rationaleops"
+version = "0.1.0"
+description = "A DataHub-grounded Cognitive Task Analysis agent for hidden business logic"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "acryl-datahub>=1.6.0.15",
+]
