@@ -1,0 +1,5 @@
+--- glossary/active-customer.md
++++ glossary/active-customer.md
+@@ -1 +1 @@
+-A customer with qualifying activity within the last 30 days.
++A customer with qualifying activity within the applicable activity window. Trial and refunded accounts, identified by account_status, are excluded from active-customer reporting.

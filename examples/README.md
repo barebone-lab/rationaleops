@@ -1,23 +1,23 @@
-# Recorded Example
+# Recorded Three-Outcome Example
 
-`recorded/` is the deterministic first vertical slice described in
-`DEVELOPMENT.md`. It is intentionally labelled as a fixture run and is not
-evidence of a successful mutation against a live DataHub instance.
+`recorded/` contains the deterministic judge fallback. It produces the same
+three outcomes without a DeepSeek key or DataHub instance:
 
-Regenerate it with:
+- `CONFIRMED_RULE` → active-window SQL acceptance test;
+- `EXPIRED_WORKAROUND` → Germany-filter removal patch and sample regression;
+- `DOCUMENTATION_DRIFT` → Active Customer glossary diff.
+
+Regenerate every contract, transcript, artifact, approval, graph, and fixture
+write receipt with:
 
 ```bash
-uv run rationaleops demo \
+uv run rationaleops demo-all \
+  --approve-actions \
   --approve-writeback \
   --output-dir examples/recorded
 ```
 
-The explicit flag authorizes only the in-memory fixture write-back. The command
-does not read live DataHub credentials or a DeepSeek API key.
-
-Outputs:
-
-- `summary.json`: risk breakdown and golden-path results.
-- `interview.json`: evidence-linked owner transcript.
-- `decision-contract.json`: confirmed typed contract and verification result.
-- `test_active_window.sql`: executable boundary acceptance test.
+These outputs are deliberately labelled `recorded-fixture`. The write receipts
+prove the approval boundary and read-after-write behavior of the fallback; live
+DataHub verification uses `rationaleops inspect-datahub` and
+`rationaleops writeback-datahub` separately.

@@ -1,36 +1,161 @@
 {
   "mode": "recorded-fixture",
+  "as_of_date": "2026-07-23",
   "decision_points_found": 3,
-  "selected_decision_point": "decision-6012568173d2",
-  "selected_sql_fragment": "activity_at >= CURRENT_DATE - INTERVAL '37 DAYS'",
   "downstream_count": 47,
-  "knowledge_risk": {
-    "normalized_downstream_count": 0.94,
-    "downstream_impact": 0.282,
-    "usage_criticality": 0.24,
-    "documentation_gap": 0.18,
-    "owner_bus_factor": 0.105,
-    "age_or_staleness": 0.055,
-    "boosts": [
-      {
-        "reason": "glossary_conflict",
-        "value": 0.1
-      }
-    ],
-    "total": 0.962
-  },
-  "adaptive_follow_up": "Does the seven-day grace period also apply to prepaid accounts? If not, which field and value identify them?",
-  "contract_status": "CONFIRMED",
+  "outcomes": [
+    "CONFIRMED_RULE",
+    "EXPIRED_WORKAROUND",
+    "DOCUMENTATION_DRIFT"
+  ],
+  "decision_cards": [
+    {
+      "decision_point": {
+        "id": "decision-6012568173d2",
+        "query_urn": "urn:li:query:revenue-daily-active-customers",
+        "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,analytics.revenue_daily,PROD)",
+        "sql_fragment": "activity_at >= CURRENT_DATE - INTERVAL '37 DAYS'",
+        "normalized_sql": "activity_at >= CURRENT_DATE - INTERVAL '37 DAY'",
+        "sql_fingerprint": "sha256:6012568173d2d9e60efa3b9e8e705fdc38dff7a0948f9ef9539008eef6753c63",
+        "ast_type": "gte",
+        "kind": "DATE_WINDOW",
+        "referenced_fields": [
+          "activity_at"
+        ],
+        "literal_values": [
+          "37"
+        ]
+      },
+      "risk": {
+        "normalized_downstream_count": 0.94,
+        "downstream_impact": 0.282,
+        "usage_criticality": 0.24,
+        "documentation_gap": 0.18,
+        "owner_bus_factor": 0.105,
+        "age_or_staleness": 0.055,
+        "boosts": [
+          {
+            "reason": "glossary_conflict",
+            "value": 0.1
+          }
+        ],
+        "total": 0.962
+      },
+      "outcome": "CONFIRMED_RULE",
+      "contract_status": "CONFIRMED",
+      "contract_id": "decision-active-window-v1",
+      "artifact_id": "artifact-active-window-test",
+      "artifact_status": "APPROVED"
+    },
+    {
+      "decision_point": {
+        "id": "decision-5a2135493239",
+        "query_urn": "urn:li:query:revenue-daily-active-customers",
+        "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,analytics.revenue_daily,PROD)",
+        "sql_fragment": "country_code <> 'DE'",
+        "normalized_sql": "country_code <> 'DE'",
+        "sql_fingerprint": "sha256:5a2135493239d499d02704a426f99a0a80c9e2fd8ad7ffa340768a7e867e98b1",
+        "ast_type": "neq",
+        "kind": "HARD_CODED_EXCLUSION",
+        "referenced_fields": [
+          "country_code"
+        ],
+        "literal_values": [
+          "DE"
+        ]
+      },
+      "risk": {
+        "normalized_downstream_count": 0.94,
+        "downstream_impact": 0.282,
+        "usage_criticality": 0.24,
+        "documentation_gap": 0.18,
+        "owner_bus_factor": 0.105,
+        "age_or_staleness": 0.055,
+        "boosts": [
+          {
+            "reason": "temporary_marker",
+            "value": 0.08
+          }
+        ],
+        "total": 0.942
+      },
+      "outcome": "EXPIRED_WORKAROUND",
+      "contract_status": "EXPIRED",
+      "contract_id": "decision-germany-hold-v1",
+      "artifact_id": "artifact-germany-patch",
+      "artifact_status": "APPROVED"
+    },
+    {
+      "decision_point": {
+        "id": "decision-481531201bbd",
+        "query_urn": "urn:li:query:revenue-daily-active-customers",
+        "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,analytics.revenue_daily,PROD)",
+        "sql_fragment": "NOT account_status IN ('trial', 'refunded')",
+        "normalized_sql": "NOT account_status IN ('trial', 'refunded')",
+        "sql_fingerprint": "sha256:481531201bbd7e7e93319ed0c688418c34c064ece8b52da1ed2d5beecb0561e9",
+        "ast_type": "not",
+        "kind": "HARD_CODED_EXCLUSION",
+        "referenced_fields": [
+          "account_status"
+        ],
+        "literal_values": [
+          "trial",
+          "refunded"
+        ]
+      },
+      "risk": {
+        "normalized_downstream_count": 0.94,
+        "downstream_impact": 0.282,
+        "usage_criticality": 0.24,
+        "documentation_gap": 0.18,
+        "owner_bus_factor": 0.105,
+        "age_or_staleness": 0.055,
+        "boosts": [
+          {
+            "reason": "glossary_conflict",
+            "value": 0.1
+          }
+        ],
+        "total": 0.962
+      },
+      "outcome": "DOCUMENTATION_DRIFT",
+      "contract_status": "CONFIRMED",
+      "contract_id": "decision-active-status-v1",
+      "artifact_id": "artifact-glossary-update",
+      "artifact_status": "APPROVED"
+    }
+  ],
   "generated_test_passes": true,
+  "expired_workaround_patch_passes": true,
+  "documentation_update_valid": true,
   "unconfirmed_rationale_published": 0,
+  "actions_approved": true,
   "writeback_approved": true,
   "datahub_write_back_visible": true,
-  "writeback_receipt": {
-    "contract_id": "decision-active-window-v1",
-    "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,analytics.revenue_daily,PROD)",
-    "mode": "recorded-fixture",
-    "written_by": "urn:li:corpuser:demo-owner",
-    "written_at": "2026-07-23T12:00:00Z",
-    "retrievable": true
-  }
+  "writeback_receipts": [
+    {
+      "contract_id": "decision-active-window-v1",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,analytics.revenue_daily,PROD)",
+      "mode": "recorded-fixture",
+      "written_by": "urn:li:corpuser:demo-owner",
+      "written_at": "2026-07-23T12:00:00Z",
+      "retrievable": true
+    },
+    {
+      "contract_id": "decision-germany-hold-v1",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,analytics.revenue_daily,PROD)",
+      "mode": "recorded-fixture",
+      "written_by": "urn:li:corpuser:demo-owner",
+      "written_at": "2026-07-23T12:00:00Z",
+      "retrievable": true
+    },
+    {
+      "contract_id": "decision-active-status-v1",
+      "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,analytics.revenue_daily,PROD)",
+      "mode": "recorded-fixture",
+      "written_by": "urn:li:corpuser:demo-owner",
+      "written_at": "2026-07-23T12:00:00Z",
+      "retrievable": true
+    }
+  ]
 }

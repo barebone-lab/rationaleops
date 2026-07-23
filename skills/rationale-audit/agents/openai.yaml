@@ -1,0 +1,4 @@
+interface:
+  display_name: "Rationale Audit"
+  short_description: "Audit hidden SQL decisions with DataHub evidence"
+  default_prompt: "Use $rationale-audit to find and safely preserve the why behind high-impact SQL logic."

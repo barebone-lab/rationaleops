@@ -1,0 +1,26 @@
+[
+  {
+    "turn_number": 1,
+    "role": "agent",
+    "content": "I found no current glossary rule for excluding Germany. Was `country_code <> 'DE'` temporary, and what event made it necessary?",
+    "evidence_ref": "interview-germany-hold:turn-1"
+  },
+  {
+    "turn_number": 2,
+    "role": "owner",
+    "content": "It was a temporary legal hold during the EU billing migration.",
+    "evidence_ref": "interview-germany-hold:turn-2"
+  },
+  {
+    "turn_number": 3,
+    "role": "agent",
+    "content": "What exact date or observable migration signal makes the filter safe to remove?",
+    "evidence_ref": "interview-germany-hold:turn-3"
+  },
+  {
+    "turn_number": 4,
+    "role": "owner",
+    "content": "The migration completed on 2026-06-30, so the hold ended that day.",
+    "evidence_ref": "interview-germany-hold:turn-4"
+  }
+]

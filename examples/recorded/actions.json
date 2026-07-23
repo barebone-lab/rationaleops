@@ -1,0 +1,63 @@
+{
+  "artifacts": [
+    {
+      "id": "artifact-active-window-test",
+      "contract_id": "decision-active-window-v1",
+      "kind": "SQL_TEST",
+      "status": "APPROVED",
+      "title": "Prepaid activity-window acceptance test",
+      "content": "-- Generated from Decision Contract: decision-active-window-v1\n-- A dbt singular test passes when this query returns zero rows.\nWITH cases(case_id, activity_at, billing_type, expected_active) AS (\n    VALUES\n        ('postpaid_day_37', DATE '2026-06-16', 'postpaid', TRUE),\n        ('postpaid_day_38', DATE '2026-06-15', 'postpaid', FALSE),\n        ('prepaid_day_30',  DATE '2026-06-23', 'prepaid',  TRUE),\n        ('prepaid_day_31',  DATE '2026-06-22', 'prepaid',  FALSE)\n),\nevaluated AS (\n    SELECT\n        case_id,\n        expected_active,\n        activity_at >= DATE '2026-07-23' -\n            CASE\n                WHEN billing_type = 'prepaid' THEN INTERVAL 30 DAY\n                ELSE INTERVAL 37 DAY\n            END AS actual_active\n    FROM cases\n)\nSELECT case_id, expected_active, actual_active\nFROM evaluated\nWHERE actual_active IS DISTINCT FROM expected_active;\n",
+      "path": "active_window/test_active_window.sql",
+      "check": {
+        "artifact_path": "active_window/test_active_window.sql",
+        "passed": true,
+        "failing_rows": []
+      }
+    },
+    {
+      "id": "artifact-germany-patch",
+      "contract_id": "decision-germany-hold-v1",
+      "kind": "SQL_PATCH",
+      "status": "APPROVED",
+      "title": "Remove expired Germany filter",
+      "content": "--- models/revenue_daily.sql\n+++ models/revenue_daily.sql\n@@ -1,10 +1,10 @@\n SELECT\n-    customer_id,\n-    activity_at,\n-    billing_type,\n-    country_code,\n-    account_status\n+  customer_id,\n+  activity_at,\n+  billing_type,\n+  country_code,\n+  account_status\n FROM analytics.revenue_daily\n-WHERE activity_at >= current_date - interval '37 days'\n-  AND country_code <> 'DE'\n-  AND account_status NOT IN ('trial', 'refunded');\n+WHERE\n+  activity_at >= CURRENT_DATE - INTERVAL '37 DAYS'\n+  AND NOT account_status IN ('trial', 'refunded');\n",
+      "path": "germany/remove_germany_filter.patch",
+      "check": {
+        "artifact_path": "germany/remove_germany_filter.patch",
+        "passed": true,
+        "failing_rows": []
+      }
+    },
+    {
+      "id": "artifact-glossary-update",
+      "contract_id": "decision-active-status-v1",
+      "kind": "CONTEXT_UPDATE",
+      "status": "APPROVED",
+      "title": "Update active-customer glossary definition",
+      "content": "--- glossary/active-customer.md\n+++ glossary/active-customer.md\n@@ -1 +1 @@\n-A customer with qualifying activity within the last 30 days.\n+A customer with qualifying activity within the applicable activity window. Trial and refunded accounts, identified by account_status, are excluded from active-customer reporting.\n",
+      "path": "status/glossary_update.diff",
+      "check": {
+        "artifact_path": "status/glossary_update.diff",
+        "passed": true,
+        "failing_rows": []
+      }
+    }
+  ],
+  "approvals": [
+    {
+      "artifact_id": "artifact-active-window-test",
+      "approved_by": "urn:li:corpuser:demo-owner",
+      "approved_at": "2026-07-23T12:00:00Z"
+    },
+    {
+      "artifact_id": "artifact-germany-patch",
+      "approved_by": "urn:li:corpuser:demo-owner",
+      "approved_at": "2026-07-23T12:00:00Z"
+    },
+    {
+      "artifact_id": "artifact-glossary-update",
+      "approved_by": "urn:li:corpuser:demo-owner",
+      "approved_at": "2026-07-23T12:00:00Z"
+    }
+  ]
+}

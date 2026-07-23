@@ -45,8 +45,7 @@ def test_fingerprint_is_stable_across_formatting_and_interval_spelling() -> None
         **common,
     )
     second = mine_decision_points(
-        "select * from TEST.TABLE where "
-        "ACTIVITY_AT>=CURRENT_DATE-INTERVAL '37' DAY",
+        "select * from TEST.TABLE where ACTIVITY_AT>=CURRENT_DATE-INTERVAL '37' DAY",
         **common,
     )
 
@@ -60,8 +59,7 @@ def test_query_without_where_has_no_candidates() -> None:
             "SELECT * FROM test.table",
             query_urn="urn:li:query:test",
             dataset_urn=(
-                "urn:li:dataset:"
-                "(urn:li:dataPlatform:postgres,test.table,PROD)"
+                "urn:li:dataset:(urn:li:dataPlatform:postgres,test.table,PROD)"
             ),
         )
         == []
@@ -74,7 +72,6 @@ def test_invalid_sql_has_a_clear_domain_error() -> None:
             "SELECT FROM WHERE",
             query_urn="urn:li:query:test",
             dataset_urn=(
-                "urn:li:dataset:"
-                "(urn:li:dataPlatform:postgres,test.table,PROD)"
+                "urn:li:dataset:(urn:li:dataPlatform:postgres,test.table,PROD)"
             ),
         )

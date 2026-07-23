@@ -76,9 +76,7 @@ def _rank_fixture_decisions(
         )
         for point in points
     ]
-    return tuple(
-        sorted(ranked, key=lambda item: item.risk.total, reverse=True)
-    )
+    return tuple(sorted(ranked, key=lambda item: item.risk.total, reverse=True))
 
 
 def run_recorded_vertical_slice(
@@ -176,12 +174,8 @@ def run_recorded_vertical_slice(
         "generated_test_passes": test_check.passed,
         "unconfirmed_rationale_published": 0,
         "writeback_approved": approve_writeback,
-        "datahub_write_back_visible": bool(
-            receipt and receipt.retrievable
-        ),
-        "writeback_receipt": (
-            receipt.model_dump(mode="json") if receipt else None
-        ),
+        "datahub_write_back_visible": bool(receipt and receipt.retrievable),
+        "writeback_receipt": (receipt.model_dump(mode="json") if receipt else None),
     }
     write_artifact(
         output_dir / "summary.json",

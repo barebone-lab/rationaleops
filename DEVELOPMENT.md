@@ -683,16 +683,16 @@ This vertical slice proves deep DataHub usage, genuine language understanding, h
 
 ## 20. Definition of Done
 
-- [ ] The application is not a SQL explainer; it finds a `WHY` that code cannot answer.
-- [ ] The application is not a generic interview bot; DataHub impact and an exact SQL decision point generate the questions.
-- [ ] The LLM performs at least one genuinely adaptive follow-up.
-- [ ] The owner's answer reveals at least one exception or boundary absent from the first answer.
-- [ ] An unconfirmed hypothesis can never become authoritative context.
-- [ ] At least one confirmed rationale becomes an executable test.
-- [ ] At least one expired workaround becomes a validated patch.
-- [ ] The demo performs a real DataHub read and write-back.
-- [ ] The three outcomes are reproducible.
-- [ ] The first 30 seconds communicate: “The code shows what. Nobody preserved why.”
+- [x] The application is not a SQL explainer; it finds a `WHY` that code cannot answer.
+- [x] The application is not a generic interview bot; DataHub impact and an exact SQL decision point generate the questions.
+- [x] The LLM performs at least one genuinely adaptive follow-up.
+- [x] The owner's answer reveals at least one exception or boundary absent from the first answer.
+- [x] An unconfirmed hypothesis can never become authoritative context.
+- [x] At least one confirmed rationale becomes an executable test.
+- [x] At least one expired workaround becomes a validated patch.
+- [x] The demo performs a real DataHub read and write-back.
+- [x] The three outcomes are reproducible.
+- [x] The first 30 seconds communicate: “The code shows what. Nobody preserved why.”
 
 ## 21. Final Message
 

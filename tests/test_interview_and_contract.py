@@ -54,9 +54,7 @@ def test_vague_answer_triggers_incident_probe() -> None:
 
 def test_exception_without_signal_triggers_executable_boundary_probe() -> None:
     interview = _new_interview()
-    interview.answer(
-        "Settlement captures were late and caused under-reporting."
-    )
+    interview.answer("Settlement captures were late and caused under-reporting.")
 
     follow_up = interview.answer("No, prepaid is different.")
 
@@ -85,9 +83,7 @@ def test_contract_stays_owner_stated_until_authorized_confirmation(
         occurred_at=datetime(2026, 7, 23, 12, 0, tzinfo=UTC),
     )
     assert confirmed.status is TruthState.CONFIRMED
-    assert confirmed.authority.confirmed_by == (
-        "urn:li:corpuser:demo-owner"
-    )
+    assert confirmed.authority.confirmed_by == ("urn:li:corpuser:demo-owner")
 
 
 def test_schema_rejects_confirmation_metadata_on_owner_stated_contract(
@@ -96,9 +92,7 @@ def test_schema_rejects_confirmation_metadata_on_owner_stated_contract(
     payload = owner_stated_contract.model_dump(mode="python")
     payload["authority"] = ContractAuthority(
         owner=owner_stated_contract.authority.owner,
-        authorized_confirmers=(
-            owner_stated_contract.authority.authorized_confirmers
-        ),
+        authorized_confirmers=(owner_stated_contract.authority.authorized_confirmers),
         confirmed_by="urn:li:corpuser:demo-owner",
         confirmed_at=datetime(2026, 7, 23, 12, 0, tzinfo=UTC),
     )

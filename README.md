@@ -6,6 +6,8 @@
 
 RationaleOps finds high-impact business decisions hidden in SQL, interviews the people who understand them, and turns human-confirmed rationale into living DataHub context, executable tests, and safe code repairs.
 
+**[Open the hosted dashboard](https://rationaleops-datahub.billycpl.chatgpt.site)** · **[Watch the 110-second demo](video/out/rationaleops-demo.mp4)**
+
 ## Judge Quick Scan
 
 | In 15 seconds | RationaleOps |
@@ -213,10 +215,10 @@ datahub_write_back_visible = true
 
 ## Implementation Status
 
-The first 37-day vertical slice now runs end to end in deterministic recorded
-mode. It deliberately keeps fixture evidence separate from live integration
-claims: the repository does **not** yet claim that MCP reads, DeepSeek calls, or
-a mutation against a real DataHub instance have been verified.
+The complete three-outcome workflow runs in deterministic recorded mode and has
+also been verified against a live local DataHub OSS graph and the live DeepSeek
+API. Recorded fixtures remain clearly labelled; they are not used as evidence
+for the live integration checks.
 
 - [x] Validated problem and evidence base
 - [x] Hackathon requirements and official scoring map
@@ -226,20 +228,22 @@ a mutation against a real DataHub instance have been verified.
 - [x] Bundled query, glossary, owner, and 47-downstream recorded fixture
 - [x] SQLGlot decision-point miner with stable fingerprints
 - [x] Transparent fixture-backed knowledge-risk ranker
-- [x] Adaptive recorded CTA interview for the 37-day rule
+- [x] Adaptive recorded CTA interviews for all three rules
 - [x] Typed Decision Contract and authorization-gated confirmation
 - [x] SQL acceptance-test generation and DuckDB validation
 - [x] Separate approval gate plus recorded write/read verification
-- [x] One-command recorded fallback with committed sample outputs
+- [x] Three-outcome recorded fallback with committed sample outputs
 - [x] Live DataHub SDK writer implementation
-- [ ] Seed the fixture into a real DataHub OSS graph
-- [ ] Replace fixture reads with DataHub MCP or Agent Context Kit reads
-- [ ] Live DeepSeek multi-turn interview path
-- [ ] Web confirmation and evidence interface
-- [ ] Germany-removal repair generation and validation
-- [ ] Execute a real DataHub write-back after explicit demo approval
-- [ ] Validate the SDK writer against the seeded DataHub instance
-- [ ] Final browser demo recording and under-three-minute video
+- [x] Seeded 47-asset DataHub OSS graph
+- [x] Official DataHub MCP reads for query, lineage, entity, owner, glossary, and schema
+- [x] Live DeepSeek V4-Pro adaptive interview path with typed JSON output
+- [x] FastAPI + SQLite workflow and audit-event persistence
+- [x] Interactive three-pane web confirmation and evidence interface
+- [x] Germany-removal repair generation and sample regression validation
+- [x] Explicitly approved real DataHub write-back and read-after-write verification
+- [x] Reusable `rationale-audit` DataHub skill
+- [x] Private hosted dashboard
+- [x] Final browser demo recording and under-three-minute video
 
 Progress is measured against the full [Definition of Done](DEVELOPMENT.md#20-definition-of-done).
 
@@ -254,10 +258,19 @@ Progress is measured against the full [Definition of Done](DEVELOPMENT.md#20-def
 │   ├── interview.py               # Recorded adaptive CTA workflow
 │   ├── contracts.py               # Contract drafting and truth-state guards
 │   ├── artifacts.py               # SQL test generation and execution
-│   ├── datahub_gateway.py         # Fixture gateway and live SDK writer
-│   └── workflow.py                # First vertical-slice orchestration
+│   ├── datahub_mcp.py             # Official MCP server read adapter
+│   ├── datahub_seed.py            # Idempotent 47-asset DataHub demo seeder
+│   ├── datahub_gateway.py         # Approval-gated SDK write adapter
+│   ├── llm.py                     # Typed DeepSeek CTA agent
+│   ├── storage.py                 # SQLite workflow and event persistence
+│   ├── service.py                 # Interactive trust-boundary service
+│   ├── api.py                     # FastAPI application
+│   └── full_workflow.py           # Complete three-outcome orchestration
+├── web/                           # Interactive React/vinext dashboard
+├── video/                         # Remotion source and 110-second MP4 demo
+├── skills/rationale-audit/        # Reusable DataHub rationale-audit skill
 ├── tests/                         # Unit and end-to-end safety tests
-├── examples/recorded/             # Generated contract, transcript, test, and receipt
+├── examples/recorded/             # Three contracts, transcripts, actions, and receipts
 ├── docs/
 │   ├── HACKATHON_BRIEF.md         # Rules, deliverables, and judging criteria
 │   └── USER_PAIN_RESEARCH.md      # Official and community evidence
@@ -272,46 +285,129 @@ Prerequisites:
 
 - Python 3.11 or newer
 - [`uv`](https://docs.astral.sh/uv/)
-- A local or reachable DataHub OSS instance for integration milestones
+- Node.js 22.13 or newer for the dashboard
+- A local or reachable DataHub OSS instance for live integration
 - A DeepSeek API key for live LLM calls
+
+Install every Python, dashboard, MCP, and video dependency in one command:
 
 ```bash
 git clone https://github.com/barebone-lab/rationaleops.git
 cd rationaleops
-uv sync --dev
-cp .env.example .env
+make setup
 ```
 
-The recorded first slice needs neither a DeepSeek key nor a live DataHub. The
-write-back flag explicitly approves only an in-memory fixture mutation:
+This also creates `.env` from the safe example when it does not already exist.
+Add credentials only when using the live integrations.
+
+Equivalent manual setup:
 
 ```bash
-uv run rationaleops demo --approve-writeback
+uv sync --dev --extra mcp
+cp .env.example .env
+npm --prefix web ci
+npm --prefix video ci
+```
+
+The full recorded demo needs neither a DeepSeek key nor a live DataHub. The two
+approval flags cover validated recorded actions and in-memory fixture writes
+only:
+
+```bash
+make demo
+# or
+uv run rationaleops demo-all \
+  --approve-actions \
+  --approve-writeback
 ```
 
 Expected result:
 
 ```text
 Decision points found: 3
-Selected risk score: 0.9620
-Contract status: CONFIRMED
-Generated SQL test passes: True
-Recorded write-back visible: True
+Outcomes: CONFIRMED_RULE, EXPIRED_WORKAROUND, DOCUMENTATION_DRIFT
+Active-window test passes: True
+Germany-removal patch passes: True
+Documentation update valid: True
+Recorded write-backs visible: True
 ```
 
-Artifacts are written to `.rationaleops/demo/`. Inspect the committed
-[recorded example](examples/recorded/summary.json), mine the bundled SQL
-directly, or run the full test suite:
+Artifacts are written to `.rationaleops/full-demo/`. Inspect the committed
+[recorded example](examples/recorded/summary.json), mine the bundled SQL, or run
+the full suite:
 
 ```bash
+make verify
+# or run individual checks
 uv run rationaleops mine
 uv run pytest
-uv run ruff check .
+uv run ruff check src tests
+uv build
 ```
 
-Omit `--approve-writeback` to verify that a confirmed contract still cannot be
-published without a separate mutation approval. Live DataHub credentials are
-not read by the recorded command.
+Omit either approval flag to inspect the corresponding safety gate. Recorded
+commands never read live DataHub credentials.
+
+### Live DataHub OSS path
+
+Start DataHub OSS, seed the graph idempotently, and prove the official MCP reads:
+
+```bash
+datahub docker quickstart
+uv run rationaleops seed-datahub
+uv run rationaleops inspect-datahub
+```
+
+The expected MCP context contains the production query, Finance owner, Active
+Customer glossary term, schema fields, and exactly 47 downstream entities.
+
+Publish one verified contract only after naming the exact item and authorized
+approver:
+
+```bash
+uv run rationaleops writeback-datahub \
+  --approve-contract decision-active-window-v1 \
+  --approved-by urn:li:corpuser:demo-owner
+```
+
+The command reads the dataset back and fails unless the contract-specific state
+is retrievable.
+
+### API and dashboard
+
+Run the stateful local API:
+
+```bash
+uv run rationaleops-api
+```
+
+In a second terminal:
+
+```bash
+cd web
+npm install
+NEXT_PUBLIC_RATIONALEOPS_API_URL=http://127.0.0.1:8000 npm run dev
+```
+
+The dashboard remains fully usable in recorded mode when no backend or LLM key
+is available. With the API connected, confirmations, artifact approvals,
+interview turns, and write-back receipts are persisted in SQLite.
+
+The deployed, owner-only dashboard is available at
+<https://rationaleops-datahub.billycpl.chatgpt.site>.
+
+### Demo video
+
+The committed 110-second text-led walkthrough uses screenshots from the real
+dashboard and remains reproducible from its Remotion source:
+
+```bash
+cd video
+npm install
+npm run render
+```
+
+The rendered submission is [`video/out/rationaleops-demo.mp4`](video/out/rationaleops-demo.mp4).
 
 ## LLM Configuration
 

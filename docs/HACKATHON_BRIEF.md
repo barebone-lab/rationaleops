@@ -70,11 +70,11 @@ Bonus consideration is available for meaningful DataHub open-source contribution
 
 ## 7. Project Scoring Checklist
 
-- [ ] The hero workflow performs at least one DataHub read, one meaningful action, and one DataHub write-back.
-- [ ] The product is neither a metadata chatbot nor a lineage-only visualization.
-- [ ] The first visible wow moment occurs within 90 seconds.
-- [ ] The failure case is reproducible and verifiable rather than judged only by an LLM.
-- [ ] Human approval or dry-run protection prevents destructive metadata changes.
-- [ ] The repository includes one-command setup, seeded data, a recorded demo mode, and sample outputs.
-- [ ] The README maps evidence to each judging criterion.
-- [ ] The project proposes at least one upstreamable DataHub Skill, bug fix, or RFC.
+- [x] The hero workflow performs at least one DataHub read, one meaningful action, and one DataHub write-back.
+- [x] The product is neither a metadata chatbot nor a lineage-only visualization.
+- [x] The first visible wow moment occurs within 90 seconds.
+- [x] The failure case is reproducible and verifiable rather than judged only by an LLM.
+- [x] Human approval or dry-run protection prevents destructive metadata changes.
+- [x] The repository includes one-command setup, seeded data, a recorded demo mode, and sample outputs.
+- [x] The README maps evidence to each judging criterion.
+- [x] The project proposes at least one upstreamable DataHub Skill, bug fix, or RFC.

@@ -1,0 +1,102 @@
+{
+  "nodes": [
+    {
+      "id": "raw_activity",
+      "label": "Raw Activity",
+      "kind": "source",
+      "critical": false
+    },
+    {
+      "id": "revenue_daily",
+      "label": "revenue_daily",
+      "kind": "dataset",
+      "critical": true
+    },
+    {
+      "id": "executive_revenue",
+      "label": "Executive Active Revenue",
+      "kind": "dashboard",
+      "critical": true
+    },
+    {
+      "id": "monthly_close",
+      "label": "Finance Monthly Close",
+      "kind": "dataset",
+      "critical": true
+    },
+    {
+      "id": "active_revenue_kpi",
+      "label": "Active Revenue KPI",
+      "kind": "chart",
+      "critical": true
+    },
+    {
+      "id": "growth_scorecard",
+      "label": "Growth Scorecard",
+      "kind": "dashboard",
+      "critical": false
+    },
+    {
+      "id": "board_pack",
+      "label": "Board Revenue Pack",
+      "kind": "dashboard",
+      "critical": true
+    },
+    {
+      "id": "forecast_inputs",
+      "label": "Forecast Inputs",
+      "kind": "dataset",
+      "critical": false
+    },
+    {
+      "id": "regional_revenue",
+      "label": "Regional Revenue",
+      "kind": "dataset",
+      "critical": false
+    },
+    {
+      "id": "plus_40",
+      "label": "+40 downstream assets",
+      "kind": "summary",
+      "critical": false
+    }
+  ],
+  "edges": [
+    {
+      "source": "raw_activity",
+      "target": "revenue_daily"
+    },
+    {
+      "source": "revenue_daily",
+      "target": "executive_revenue"
+    },
+    {
+      "source": "revenue_daily",
+      "target": "monthly_close"
+    },
+    {
+      "source": "revenue_daily",
+      "target": "active_revenue_kpi"
+    },
+    {
+      "source": "revenue_daily",
+      "target": "growth_scorecard"
+    },
+    {
+      "source": "revenue_daily",
+      "target": "board_pack"
+    },
+    {
+      "source": "revenue_daily",
+      "target": "forecast_inputs"
+    },
+    {
+      "source": "revenue_daily",
+      "target": "regional_revenue"
+    },
+    {
+      "source": "revenue_daily",
+      "target": "plus_40"
+    }
+  ]
+}

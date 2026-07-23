@@ -1,0 +1,59 @@
+{
+  "id": "decision-active-status-v1",
+  "status": "CONFIRMED",
+  "finding_type": "CONTRADICTORY_DECISION",
+  "outcome": "DOCUMENTATION_DRIFT",
+  "title": "Official trial and refund exclusion",
+  "implements": {
+    "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,analytics.revenue_daily,PROD)",
+    "query_urn": "urn:li:query:revenue-daily-active-customers",
+    "sql_fingerprint": "sha256:481531201bbd7e7e93319ed0c688418c34c064ece8b52da1ed2d5beecb0561e9",
+    "sql_fragment": "NOT account_status IN ('trial', 'refunded')"
+  },
+  "intent": {
+    "goal": "Keep non-revenue accounts out of active-customer reporting",
+    "canonical_rule": "Active customers exclude trial and refunded account statuses"
+  },
+  "scope": {
+    "includes": [
+      "revenue-eligible customer accounts"
+    ],
+    "excludes": [
+      "trial accounts",
+      "refunded accounts"
+    ]
+  },
+  "exceptions": [],
+  "authority": {
+    "owner": "urn:li:corpGroup:finance-data",
+    "authorized_confirmers": [
+      "urn:li:corpuser:demo-owner"
+    ],
+    "confirmed_by": "urn:li:corpuser:demo-owner",
+    "confirmed_at": "2026-07-23T12:00:00Z"
+  },
+  "lifecycle": {
+    "effective_from": null,
+    "expires_at": null,
+    "review_on": [
+      "account_status_taxonomy_change"
+    ]
+  },
+  "evidence": {
+    "interview_quote_refs": [
+      "interview-status-rule:turn-2",
+      "interview-status-rule:turn-4"
+    ],
+    "datahub_asset_refs": [
+      "urn:li:dataset:(urn:li:dataPlatform:postgres,analytics.revenue_daily,PROD)"
+    ]
+  },
+  "verification": {
+    "tests": [],
+    "artifacts": [
+      "status/glossary_update.diff"
+    ],
+    "passed": true,
+    "checked_at": "2026-07-23T12:00:00Z"
+  }
+}

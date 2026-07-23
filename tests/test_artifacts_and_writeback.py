@@ -77,7 +77,7 @@ def test_fixture_writeback_requires_confirmation_and_separate_approval(
 
     with pytest.raises(
         WriteBackError,
-        match="only CONFIRMED contracts",
+        match="only confirmed or historically confirmed expired contracts",
     ):
         gateway.write_contract(
             owner_stated_contract,

@@ -38,6 +38,4 @@ def test_risk_score_matches_documented_formula_and_boost() -> None:
     assert risk.owner_bus_factor == 0.105
     assert risk.age_or_staleness == 0.055
     assert risk.total == 0.962
-    assert [boost.reason for boost in risk.boosts] == [
-        "glossary_conflict"
-    ]
+    assert [boost.reason for boost in risk.boosts] == ["glossary_conflict"]

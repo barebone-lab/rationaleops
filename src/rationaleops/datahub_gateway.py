@@ -24,16 +24,20 @@ def _validate_write_approval(
     contract: DecisionContract,
     approval: MutationApproval,
 ) -> None:
-    if contract.status is not TruthState.CONFIRMED:
-        raise WriteBackError("only CONFIRMED contracts may be written back")
+    if contract.status not in {TruthState.CONFIRMED, TruthState.EXPIRED}:
+        raise WriteBackError(
+            "only confirmed or historically confirmed expired contracts "
+            "may be written back"
+        )
     if approval.contract_id != contract.id:
         raise WriteBackError("approval does not match the contract")
     if approval.approved_by not in contract.authority.authorized_confirmers:
         raise WriteBackError("write-back approver is not authorized")
-    if not contract.verification.tests or contract.verification.passed is not True:
-        raise WriteBackError(
-            "write-back requires a passing deterministic verification"
-        )
+    if (
+        not (contract.verification.tests or contract.verification.artifacts)
+        or contract.verification.passed is not True
+    ):
+        raise WriteBackError("write-back requires a passing deterministic verification")
     confirmed_at = contract.authority.confirmed_at
     checked_at = contract.verification.checked_at
     if confirmed_at and approval.approved_at < confirmed_at:
@@ -93,11 +97,22 @@ class DataHubSdkWriter:
         self._client = DataHubClient(server=server, token=token)
 
     @staticmethod
+    def _contract_key(contract_id: str) -> str:
+        return contract_id.replace(".", "_")
+
+    @staticmethod
     def _contract_properties(contract: DecisionContract) -> dict[str, str]:
         confirmed_at = contract.authority.confirmed_at
-        return {
+        expires_at = contract.lifecycle.expires_at
+        properties = {
             "rationaleops.contract_id": contract.id,
             "rationaleops.status": contract.status.value,
+            "rationaleops.finding_type": (
+                contract.finding_type.value if contract.finding_type else ""
+            ),
+            "rationaleops.outcome": (
+                contract.outcome.value if contract.outcome else ""
+            ),
             "rationaleops.title": contract.title,
             "rationaleops.intent": contract.intent.canonical_rule,
             "rationaleops.owner": contract.authority.owner,
@@ -105,17 +120,31 @@ class DataHubSdkWriter:
             "rationaleops.confirmed_at": (
                 confirmed_at.isoformat() if confirmed_at else ""
             ),
-            "rationaleops.sql_fingerprint": (
-                contract.implements.sql_fingerprint
-            ),
+            "rationaleops.sql_fingerprint": (contract.implements.sql_fingerprint),
             "rationaleops.review_on": json.dumps(
                 contract.lifecycle.review_on,
+                separators=(",", ":"),
+            ),
+            "rationaleops.expires_at": expires_at.isoformat() if expires_at else "",
+            "rationaleops.verification_artifacts": json.dumps(
+                contract.verification.tests + contract.verification.artifacts,
                 separators=(",", ":"),
             ),
             "rationaleops.verification_passed": str(
                 contract.verification.passed
             ).lower(),
         }
+        contract_key = DataHubSdkWriter._contract_key(contract.id)
+        properties[f"rationaleops.contract.{contract_key}.status"] = (
+            contract.status.value
+        )
+        properties[f"rationaleops.contract.{contract_key}.intent"] = (
+            contract.intent.canonical_rule
+        )
+        properties[f"rationaleops.contract.{contract_key}.fingerprint"] = (
+            contract.implements.sql_fingerprint
+        )
+        return properties
 
     def test_connection(self) -> None:
         self._client.test_connection()
@@ -141,10 +170,8 @@ class DataHubSdkWriter:
         persisted = self._client.entities.get(contract.implements.dataset_urn)
         if not isinstance(persisted, Dataset):
             raise WriteBackError("unable to retrieve the updated dataset")
-        retrievable = (
-            persisted.custom_properties.get("rationaleops.contract_id")
-            == contract.id
-        )
+        marker = f"rationaleops.contract.{self._contract_key(contract.id)}.status"
+        retrievable = persisted.custom_properties.get(marker) == contract.status.value
         return WriteBackReceipt(
             contract_id=contract.id,
             dataset_urn=contract.implements.dataset_urn,

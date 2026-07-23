@@ -1,0 +1,58 @@
+{
+  "id": "decision-germany-hold-v1",
+  "status": "EXPIRED",
+  "finding_type": "EXPIRED_DECISION",
+  "outcome": "EXPIRED_WORKAROUND",
+  "title": "Temporary Germany legal hold",
+  "implements": {
+    "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,analytics.revenue_daily,PROD)",
+    "query_urn": "urn:li:query:revenue-daily-active-customers",
+    "sql_fingerprint": "sha256:5a2135493239d499d02704a426f99a0a80c9e2fd8ad7ffa340768a7e867e98b1",
+    "sql_fragment": "country_code <> 'DE'"
+  },
+  "intent": {
+    "goal": "Pause German revenue reporting during the EU billing migration",
+    "canonical_rule": "Exclude Germany only until the EU billing migration is complete"
+  },
+  "scope": {
+    "includes": [
+      "all countries after migration completion"
+    ],
+    "excludes": [
+      "Germany before migration completion"
+    ]
+  },
+  "exceptions": [],
+  "authority": {
+    "owner": "urn:li:corpGroup:finance-data",
+    "authorized_confirmers": [
+      "urn:li:corpuser:demo-owner"
+    ],
+    "confirmed_by": "urn:li:corpuser:demo-owner",
+    "confirmed_at": "2026-07-23T12:00:00Z"
+  },
+  "lifecycle": {
+    "effective_from": null,
+    "expires_at": "2026-06-30",
+    "review_on": [
+      "eu_billing_migration_complete"
+    ]
+  },
+  "evidence": {
+    "interview_quote_refs": [
+      "interview-germany-hold:turn-2",
+      "interview-germany-hold:turn-4"
+    ],
+    "datahub_asset_refs": [
+      "urn:li:dataset:(urn:li:dataPlatform:postgres,analytics.revenue_daily,PROD)"
+    ]
+  },
+  "verification": {
+    "tests": [],
+    "artifacts": [
+      "germany/remove_germany_filter.patch"
+    ],
+    "passed": true,
+    "checked_at": "2026-07-23T12:00:00Z"
+  }
+}

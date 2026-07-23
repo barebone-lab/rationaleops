@@ -1,0 +1,26 @@
+[
+  {
+    "turn_number": 1,
+    "role": "agent",
+    "content": "DataHub's active-customer glossary says activity within 30 days, but production SQL uses `activity_at >= CURRENT_DATE - INTERVAL '37 DAYS'` and reaches 47 downstream assets. Was 37 days deliberate? What event led to that decision?",
+    "evidence_ref": "interview-active-window:turn-1"
+  },
+  {
+    "turn_number": 2,
+    "role": "owner",
+    "content": "Finance added a seven-day settlement grace period after late card captures caused monthly under-reporting.",
+    "evidence_ref": "interview-active-window:turn-2"
+  },
+  {
+    "turn_number": 3,
+    "role": "agent",
+    "content": "Does the seven-day grace period also apply to prepaid accounts? If not, which field and value identify them?",
+    "evidence_ref": "interview-active-window:turn-3"
+  },
+  {
+    "turn_number": 4,
+    "role": "owner",
+    "content": "No. Prepaid accounts are identified by billing_type = 'prepaid' and remain on a 30-day window.",
+    "evidence_ref": "interview-active-window:turn-4"
+  }
+]
