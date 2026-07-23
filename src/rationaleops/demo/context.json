@@ -1,0 +1,31 @@
+{
+  "query_urn": "urn:li:query:revenue-daily-active-customers",
+  "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,analytics.revenue_daily,PROD)",
+  "dialect": "postgres",
+  "glossary": [
+    {
+      "term": "Active Customer",
+      "definition": "A customer with qualifying activity within the last 30 days.",
+      "urn": "urn:li:glossaryTerm:activeCustomer"
+    }
+  ],
+  "owner": {
+    "owner_urn": "urn:li:corpGroup:finance-data",
+    "display_name": "Finance Data",
+    "authorized_confirmers": [
+      "urn:li:corpuser:demo-owner"
+    ]
+  },
+  "impact": {
+    "downstream_count": 47,
+    "critical_assets": [
+      "urn:li:dashboard:(looker,executive-active-revenue)",
+      "urn:li:dataset:(urn:li:dataPlatform:dbt,finance.monthly_close,PROD)",
+      "urn:li:chart:(looker,active-revenue-kpi)"
+    ],
+    "usage_criticality": 0.96,
+    "documentation_gap": 0.9,
+    "owner_bus_factor": 0.7,
+    "age_or_staleness": 0.55
+  }
+}

@@ -213,22 +213,33 @@ datahub_write_back_visible = true
 
 ## Implementation Status
 
-This repository currently contains the development scaffold and complete implementation specification. It does **not** yet claim that the end-to-end application is finished.
+The first 37-day vertical slice now runs end to end in deterministic recorded
+mode. It deliberately keeps fixture evidence separate from live integration
+claims: the repository does **not** yet claim that MCP reads, DeepSeek calls, or
+a mutation against a real DataHub instance have been verified.
 
 - [x] Validated problem and evidence base
 - [x] Hackathon requirements and official scoring map
 - [x] Product architecture, trust boundary, and typed contract design
 - [x] Reproducible hero scenario and three-minute script
 - [x] DeepSeek V4-Pro configuration
-- [ ] Seeded DataHub demo graph
-- [ ] SQL AST decision-point miner
-- [ ] DataHub impact ranker
-- [ ] Multi-turn CTA interview agent
-- [ ] Human confirmation interface
-- [ ] Test and repair generation
-- [ ] Deterministic validation runner
-- [ ] DataHub write-back
-- [ ] Recorded fallback and final demo video
+- [x] Bundled query, glossary, owner, and 47-downstream recorded fixture
+- [x] SQLGlot decision-point miner with stable fingerprints
+- [x] Transparent fixture-backed knowledge-risk ranker
+- [x] Adaptive recorded CTA interview for the 37-day rule
+- [x] Typed Decision Contract and authorization-gated confirmation
+- [x] SQL acceptance-test generation and DuckDB validation
+- [x] Separate approval gate plus recorded write/read verification
+- [x] One-command recorded fallback with committed sample outputs
+- [x] Live DataHub SDK writer implementation
+- [ ] Seed the fixture into a real DataHub OSS graph
+- [ ] Replace fixture reads with DataHub MCP or Agent Context Kit reads
+- [ ] Live DeepSeek multi-turn interview path
+- [ ] Web confirmation and evidence interface
+- [ ] Germany-removal repair generation and validation
+- [ ] Execute a real DataHub write-back after explicit demo approval
+- [ ] Validate the SDK writer against the seeded DataHub instance
+- [ ] Final browser demo recording and under-three-minute video
 
 Progress is measured against the full [Definition of Done](DEVELOPMENT.md#20-definition-of-done).
 
@@ -237,11 +248,21 @@ Progress is measured against the full [Definition of Done](DEVELOPMENT.md#20-def
 ```text
 .
 ├── DEVELOPMENT.md                 # Product, architecture, demo, and implementation plan
+├── src/rationaleops/
+│   ├── mining.py                  # Deterministic SQL AST candidate extraction
+│   ├── risk.py                    # Transparent knowledge-risk formula
+│   ├── interview.py               # Recorded adaptive CTA workflow
+│   ├── contracts.py               # Contract drafting and truth-state guards
+│   ├── artifacts.py               # SQL test generation and execution
+│   ├── datahub_gateway.py         # Fixture gateway and live SDK writer
+│   └── workflow.py                # First vertical-slice orchestration
+├── tests/                         # Unit and end-to-end safety tests
+├── examples/recorded/             # Generated contract, transcript, test, and receipt
 ├── docs/
 │   ├── HACKATHON_BRIEF.md         # Rules, deliverables, and judging criteria
 │   └── USER_PAIN_RESEARCH.md      # Official and community evidence
 ├── .env.example                   # Safe local configuration template
-├── main.py                        # Current development entry point
+├── main.py                        # CLI-compatible development entry point
 └── pyproject.toml                 # Python project metadata
 ```
 
@@ -257,22 +278,40 @@ Prerequisites:
 ```bash
 git clone https://github.com/barebone-lab/rationaleops.git
 cd rationaleops
-uv sync
+uv sync --dev
 cp .env.example .env
 ```
 
-Set `DEEPSEEK_API_KEY` in `.env`, then run the current scaffold:
+The recorded first slice needs neither a DeepSeek key nor a live DataHub. The
+write-back flag explicitly approves only an in-memory fixture mutation:
 
 ```bash
-uv run python main.py
+uv run rationaleops demo --approve-writeback
 ```
 
-Expected output:
+Expected result:
 
 ```text
-RationaleOps development scaffold
-See DEVELOPMENT.md for the implementation plan and Definition of Done.
+Decision points found: 3
+Selected risk score: 0.9620
+Contract status: CONFIRMED
+Generated SQL test passes: True
+Recorded write-back visible: True
 ```
+
+Artifacts are written to `.rationaleops/demo/`. Inspect the committed
+[recorded example](examples/recorded/summary.json), mine the bundled SQL
+directly, or run the full test suite:
+
+```bash
+uv run rationaleops mine
+uv run pytest
+uv run ruff check .
+```
+
+Omit `--approve-writeback` to verify that a confirmed contract still cannot be
+published without a separate mutation approval. Live DataHub credentials are
+not read by the recorded command.
 
 ## LLM Configuration
 

@@ -1,7 +1,4 @@
-def main():
-    print("RationaleOps development scaffold")
-    print("See DEVELOPMENT.md for the implementation plan and Definition of Done.")
-
+from rationaleops.cli import main
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

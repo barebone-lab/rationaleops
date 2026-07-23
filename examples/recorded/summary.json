@@ -1,0 +1,36 @@
+{
+  "mode": "recorded-fixture",
+  "decision_points_found": 3,
+  "selected_decision_point": "decision-6012568173d2",
+  "selected_sql_fragment": "activity_at >= CURRENT_DATE - INTERVAL '37 DAYS'",
+  "downstream_count": 47,
+  "knowledge_risk": {
+    "normalized_downstream_count": 0.94,
+    "downstream_impact": 0.282,
+    "usage_criticality": 0.24,
+    "documentation_gap": 0.18,
+    "owner_bus_factor": 0.105,
+    "age_or_staleness": 0.055,
+    "boosts": [
+      {
+        "reason": "glossary_conflict",
+        "value": 0.1
+      }
+    ],
+    "total": 0.962
+  },
+  "adaptive_follow_up": "Does the seven-day grace period also apply to prepaid accounts? If not, which field and value identify them?",
+  "contract_status": "CONFIRMED",
+  "generated_test_passes": true,
+  "unconfirmed_rationale_published": 0,
+  "writeback_approved": true,
+  "datahub_write_back_visible": true,
+  "writeback_receipt": {
+    "contract_id": "decision-active-window-v1",
+    "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,analytics.revenue_daily,PROD)",
+    "mode": "recorded-fixture",
+    "written_by": "urn:li:corpuser:demo-owner",
+    "written_at": "2026-07-23T12:00:00Z",
+    "retrievable": true
+  }
+}

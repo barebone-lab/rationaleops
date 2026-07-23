@@ -1,0 +1,64 @@
+{
+  "id": "decision-active-window-v1",
+  "status": "CONFIRMED",
+  "title": "Seven-day settlement grace period",
+  "implements": {
+    "dataset_urn": "urn:li:dataset:(urn:li:dataPlatform:postgres,analytics.revenue_daily,PROD)",
+    "query_urn": "urn:li:query:revenue-daily-active-customers",
+    "sql_fingerprint": "sha256:6012568173d2d9e60efa3b9e8e705fdc38dff7a0948f9ef9539008eef6753c63",
+    "sql_fragment": "activity_at >= CURRENT_DATE - INTERVAL '37 DAYS'"
+  },
+  "intent": {
+    "goal": "Prevent under-reporting caused by late card settlement",
+    "canonical_rule": "Activity within 30 days plus a seven-day grace period for postpaid accounts"
+  },
+  "scope": {
+    "includes": [
+      "postpaid accounts"
+    ],
+    "excludes": [
+      "prepaid accounts from the grace period"
+    ]
+  },
+  "exceptions": [
+    {
+      "when": "billing_type = 'prepaid'",
+      "behavior": "use a 30-day activity window",
+      "evidence_refs": [
+        "interview-001:turn-4"
+      ]
+    }
+  ],
+  "authority": {
+    "owner": "urn:li:corpGroup:finance-data",
+    "authorized_confirmers": [
+      "urn:li:corpuser:demo-owner"
+    ],
+    "confirmed_by": "urn:li:corpuser:demo-owner",
+    "confirmed_at": "2026-07-23T12:00:00Z"
+  },
+  "lifecycle": {
+    "effective_from": null,
+    "expires_at": null,
+    "review_on": [
+      "settlement_provider_change",
+      "glossary_definition_change"
+    ]
+  },
+  "evidence": {
+    "interview_quote_refs": [
+      "interview-001:turn-2",
+      "interview-001:turn-4"
+    ],
+    "datahub_asset_refs": [
+      "urn:li:dataset:(urn:li:dataPlatform:postgres,analytics.revenue_daily,PROD)"
+    ]
+  },
+  "verification": {
+    "tests": [
+      "test_active_window.sql"
+    ],
+    "passed": true,
+    "checked_at": "2026-07-23T12:00:00Z"
+  }
+}
