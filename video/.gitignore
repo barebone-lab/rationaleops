@@ -6,3 +6,7 @@ dist
 # Keep the final submission video, but ignore temporary render checks.
 out/*
 !out/rationaleops-demo.mp4
+
+# Downloaded background music — kept as the single chosen track
+public/music/*.mp3
+!public/music/bg-music.mp3

@@ -1,6 +1,7 @@
 import type { CSSProperties, ReactNode } from "react";
 import {
   AbsoluteFill,
+  Audio,
   Easing,
   Img,
   interpolate,
@@ -404,8 +405,22 @@ export const RationaleOpsVideo = () => {
     from += duration;
     return <Sequence key={start} from={start} durationInFrames={duration}>{child}</Sequence>;
   };
+  // ── Background music ─────────────────────────────────────────
+  // Mixkit royalty-free track — no attribution required.
+  // To try other tracks, download from mixkit.co and replace
+  // public/music/bg-music.mp3, then adjust the filename here.
+  // ──────────────────────────────────────────────────────────────
+  const musicVolume = 0.18;
+
   return (
     <AbsoluteFill style={{ backgroundColor: COLORS.ink }}>
+      {/* ── background music ── */}
+      <Audio
+        src={staticFile("music/bg-music.mp3")}
+        volume={musicVolume}
+        loop
+      />
+      {/* ── scenes ── */}
       {place(scenes.hook, <HookScene duration={scenes.hook} />)}
       {place(scenes.context, <ContextScene duration={scenes.context} />)}
       {place(scenes.radar, <ScreenshotScene duration={scenes.radar} file="dashboard-initial.png" label="02 · DETERMINISTIC RISK RADAR" title="Mine the exact SQL. Rank the knowledge risk." accent={COLORS.cyan} />)}
