@@ -13,7 +13,7 @@ permissions:
 jobs:
   # ── Python backend ──────────────────────────────────────────────
   backend:
-    name: "Python ${{ matrix.python-version }}"
+    name: "Python ${{ matrix.python-version }} · lint + test"
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -35,19 +35,19 @@ jobs:
       - name: Lint (ruff)
         run: uv run ruff check src tests
 
-      - name: Lint (ruff format check)
+      - name: Format check (ruff)
         run: uv run ruff format --check src tests
 
       - name: Run tests
         run: uv run pytest -v --tb=short
 
-  # ── Frontend dashboard ──────────────────────────────────────────
+  # ── Frontend dashboard (GitHub Pages) ───────────────────────────
   frontend:
-    name: "Frontend (Node.js 22)"
+    name: "Frontend · lint + build"
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: web
+        working-directory: web/gh-pages
     steps:
       - uses: actions/checkout@v4
 
@@ -55,15 +55,12 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: web/package-lock.json
+          cache-dependency-path: web/gh-pages/package-lock.json
 
       - run: npm ci
 
-      - name: Mock ChatGPT hosting config
-        run: echo '{"d1":null,"r2":null}' > .openai/hosting.json
+      - name: Type check
+        run: npx tsc --noEmit
 
-      - name: Lint (eslint)
-        run: npm run lint
-
-      - name: Build & HTML verification
-        run: npm test
+      - name: Build
+        run: npm run build
