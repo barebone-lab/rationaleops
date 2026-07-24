@@ -59,6 +59,9 @@ jobs:
 
       - run: npm ci
 
+      - name: Mock ChatGPT hosting config
+        run: echo '{"d1":null,"r2":null}' > .openai/hosting.json
+
       - name: Lint (eslint)
         run: npm run lint
 
