@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  # ── Python backend ──────────────────────────────────────────────
+  backend:
+    name: "Python ${{ matrix.python-version }}"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install Python ${{ matrix.python-version }}
+        run: uv python install ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: uv sync --dev --extra mcp
+
+      - name: Lint (ruff)
+        run: uv run ruff check src tests
+
+      - name: Lint (ruff format check)
+        run: uv run ruff format --check src tests
+
+      - name: Run tests
+        run: uv run pytest -v --tb=short
+
+  # ── Frontend dashboard ──────────────────────────────────────────
+  frontend:
+    name: "Frontend (Node.js 22)"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - run: npm ci
+
+      - name: Lint (eslint)
+        run: npm run lint
+
+      - name: Build & HTML verification
+        run: npm test
