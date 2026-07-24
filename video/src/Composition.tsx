@@ -34,6 +34,9 @@ const labelStyle: CSSProperties = {
   textTransform: "uppercase",
 };
 
+// ── In-component labels (OWNER · TURN 2, ADAPTIVE COUNTERFACTUAL)
+// use fontSize: 18 via inline overrides in InterviewScene.
+
 const headlineStyle: CSSProperties = {
   fontFamily: "Inter, Arial, sans-serif",
   color: COLORS.paper,
@@ -85,7 +88,6 @@ const Scene = ({ children, duration }: { children: ReactNode; duration: number }
     >
       <div className="frame-rule frame-rule-top" />
       <div className="frame-rule frame-rule-bottom" />
-      <div className="frame-index">RATIONALEOPS / BUILD WITH DATAHUB</div>
       {children}
     </AbsoluteFill>
   );
@@ -126,7 +128,6 @@ const HookScene = ({ duration }: { duration: number }) => {
     <Scene duration={duration}>
       <div style={{ ...enter(frame, 4), display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <Brand compact />
-        <span style={{ ...labelStyle, color: COLORS.coral }}>THE HIDDEN DECISION PROBLEM</span>
       </div>
       <div style={{ marginTop: 95, maxWidth: 1460 }}>
         <h1 style={{ ...headlineStyle, ...enter(frame, 20), fontSize: 108 }}>
@@ -160,7 +161,6 @@ const ContextScene = ({ duration }: { duration: number }) => {
   const consumers = ["Executive Revenue", "Monthly Close", "Active KPI", "Board Pack", "+43 more"];
   return (
     <Scene duration={duration}>
-      <div style={{ ...labelStyle, ...enter(frame, 4) }}>01 · DATAHUB IS THE EVIDENCE LAYER</div>
       <div style={{ display: "grid", gridTemplateColumns: ".9fr 1.1fr", gap: 80, alignItems: "center", flex: 1 }}>
         <div>
           <h2 style={{ ...headlineStyle, ...enter(frame, 18) }}>Find the decision with the biggest blast radius.</h2>
@@ -196,16 +196,11 @@ const ContextScene = ({ duration }: { duration: number }) => {
   );
 };
 
-const ScreenshotScene = ({ duration, file, label, title, accent, zoom = 1 }: { duration: number; file: string; label: string; title: string; accent: string; zoom?: number }) => {
+const ScreenshotScene = ({ duration, file, title, zoom = 1 }: { duration: number; file: string; title: string; zoom?: number }) => {
   const frame = useCurrentFrame();
   return (
     <Scene duration={duration}>
-      <div style={{ marginBottom: 32 }}>
-        <div>
-          <div style={{ ...labelStyle, color: accent, ...enter(frame, 4) }}>{label}</div>
-          <h2 style={{ ...headlineStyle, fontSize: 72, marginTop: 15, ...enter(frame, 16) }}>{title}</h2>
-        </div>
-      </div>
+      <h2 style={{ ...headlineStyle, fontSize: 72, marginTop: 15, ...enter(frame, 16) }}>{title}</h2>
       <div style={{ flex: 1, overflow: "hidden", border: `2px solid ${COLORS.line}`, backgroundColor: "#0b100c", ...enter(frame, 30) }}>
         <Img
           src={staticFile(file)}
@@ -226,7 +221,6 @@ const InterviewScene = ({ duration }: { duration: number }) => {
   const frame = useCurrentFrame();
   return (
     <Scene duration={duration}>
-      <div style={{ ...labelStyle, ...enter(frame, 4) }}>03 · COGNITIVE TASK ANALYSIS</div>
       <h2 style={{ ...headlineStyle, fontSize: 79, marginTop: 18, ...enter(frame, 14) }}>Ask for the boundary the first answer leaves out.</h2>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 34, marginTop: 54, alignItems: "stretch" }}>
         <div style={{ border: `2px solid ${COLORS.line}`, backgroundColor: COLORS.ink2, padding: 35, ...enter(frame, 35) }}>
@@ -259,7 +253,6 @@ const OutcomesScene = ({ duration }: { duration: number }) => {
   ];
   return (
     <Scene duration={duration}>
-      <div style={{ ...labelStyle, ...enter(frame, 4) }}>THE WOW MOMENT</div>
       <h2 style={{ ...headlineStyle, marginTop: 18, ...enter(frame, 15) }}>Three similar filters. Three different actions.</h2>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 25, marginTop: 72 }}>
         {outcomes.map((item, index) => (
@@ -288,7 +281,6 @@ const ArtifactsScene = ({ duration }: { duration: number }) => {
     <Scene duration={duration}>
       <div style={{ display: "grid", gridTemplateColumns: "1fr .95fr", gap: 65, flex: 1, alignItems: "center" }}>
         <div>
-          <div style={{ ...labelStyle, ...enter(frame, 4) }}>04 · OPERATIONALIZE</div>
           <h2 style={{ ...headlineStyle, marginTop: 20, ...enter(frame, 16) }}>Every confirmed decision produces something executable.</h2>
           <p style={{ ...bodyStyle, marginTop: 35, ...enter(frame, 38) }}>The model may draft. Deterministic code decides whether the artifact passes.</p>
         </div>
@@ -318,7 +310,6 @@ const TrustScene = ({ duration }: { duration: number }) => {
   ] as const;
   return (
     <Scene duration={duration}>
-      <div style={{ ...labelStyle, ...enter(frame, 4) }}>THE SAFETY MODEL</div>
       <h2 style={{ ...headlineStyle, marginTop: 20, ...enter(frame, 15) }}>No plausible story silently becomes policy.</h2>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 38, marginTop: 105 }}>
         {steps.map(([number, title, text, color], index) => (
@@ -345,7 +336,6 @@ const ProofScene = ({ duration }: { duration: number }) => {
     <Scene duration={duration}>
       <div style={{ display: "grid", gridTemplateColumns: "1.1fr .9fr", gap: 90, flex: 1, alignItems: "center" }}>
         <div>
-          <div style={{ ...labelStyle, ...enter(frame, 4) }}>REAL DATAHUB READ + WRITE</div>
           <h2 style={{ ...headlineStyle, marginTop: 20, ...enter(frame, 16) }}>The why is now retrievable where the data lives.</h2>
           <p style={{ ...bodyStyle, marginTop: 38, ...enter(frame, 40) }}>Official MCP read: query, schema, owner, glossary, and exactly 47 downstream assets.</p>
         </div>
@@ -423,10 +413,10 @@ export const RationaleOpsVideo = () => {
       {/* ── scenes ── */}
       {place(scenes.hook, <HookScene duration={scenes.hook} />)}
       {place(scenes.context, <ContextScene duration={scenes.context} />)}
-      {place(scenes.radar, <ScreenshotScene duration={scenes.radar} file="dashboard-initial.png" label="02 · DETERMINISTIC RISK RADAR" title="Mine the exact SQL. Rank the knowledge risk." accent={COLORS.cyan} />)}
+      {place(scenes.radar, <ScreenshotScene duration={scenes.radar} file="dashboard-initial.png" title="Mine the exact SQL. Rank the knowledge risk." />)}
       {place(scenes.interview, <InterviewScene duration={scenes.interview} />)}
       {place(scenes.outcomes, <OutcomesScene duration={scenes.outcomes} />)}
-      {place(scenes.artifactScreenshot, <ScreenshotScene duration={scenes.artifactScreenshot} file="dashboard-action.png" label="VALIDATED ACTION WORKBENCH" title="Owner-confirmed intent becomes a passing test." accent={COLORS.acid} zoom={1.01} />)}
+      {place(scenes.artifactScreenshot, <ScreenshotScene duration={scenes.artifactScreenshot} file="dashboard-action.png" title="Owner-confirmed intent becomes a passing test." zoom={1.01} />)}
       {place(scenes.artifacts, <ArtifactsScene duration={scenes.artifacts} />)}
       {place(scenes.trust, <TrustScene duration={scenes.trust} />)}
       {place(scenes.proof, <ProofScene duration={scenes.proof} />)}
