@@ -6,7 +6,7 @@
 
 RationaleOps finds high-impact business decisions hidden in SQL, interviews the people who understand them, and turns human-confirmed rationale into living DataHub context, executable tests, and safe code repairs.
 
-**[Open the hosted dashboard](https://rationaleops-datahub.billycpl.chatgpt.site)** · **[Watch the 110-second demo](video/out/rationaleops-demo.mp4)**
+**[Open the hosted dashboard](https://barebone-lab.github.io/rationaleops/)** · **[Watch the 110-second demo](video/out/rationaleops-demo.mp4)**
 
 ## Judge Quick Scan
 
@@ -394,7 +394,7 @@ is available. With the API connected, confirmations, artifact approvals,
 interview turns, and write-back receipts are persisted in SQLite.
 
 The deployed, owner-only dashboard is available at
-<https://rationaleops-datahub.billycpl.chatgpt.site>.
+<https://barebone-lab.github.io/rationaleops/>.
 
 ### Demo video
 
