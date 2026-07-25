@@ -375,6 +375,46 @@ const ClosingScene = ({ duration }: { duration: number }) => {
   );
 };
 
+const EndCreditsScene = ({ duration }: { duration: number }) => {
+  const frame = useCurrentFrame();
+  return (
+    <Scene duration={duration}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 55 }}>
+        <h2 style={{ ...headlineStyle, fontSize: 70, textAlign: "center", ...enter(frame, 14) }}>
+          Scan to explore on <span style={{ color: COLORS.acid }}>GitHub</span>
+        </h2>
+        <div style={{ display: "flex", alignItems: "center", gap: 75, ...enter(frame, 44) }}>
+          <Img
+            src="https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=https://github.com/barebone-lab/rationaleops"
+            style={{
+              width: 280,
+              height: 280,
+              border: `4px solid ${COLORS.acid}`,
+              backgroundColor: "#fff",
+              padding: 8,
+            }}
+          />
+          <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
+            <div style={{ ...monoStyle, fontSize: 38, color: COLORS.paper, lineHeight: 1.5 }}>
+              github.com/
+              <span style={{ color: COLORS.acid }}>barebone-lab</span>
+              /
+              <span style={{ color: COLORS.cyan }}>rationaleops</span>
+            </div>
+            <div style={{ display: "flex", gap: 16 }}>
+              {["OPEN SOURCE", "MIT LICENSE", "STARRED"].map((tag) => (
+                <span key={tag} style={{ ...monoStyle, border: `2px solid ${COLORS.line}`, padding: "10px 18px", color: COLORS.cyan, fontSize: 16 }}>
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </Scene>
+  );
+};
+
 export const RationaleOpsVideo = () => {
   const { fps } = useVideoConfig();
   const scenes = {
@@ -388,6 +428,7 @@ export const RationaleOpsVideo = () => {
     trust: 10 * fps,
     proof: 10 * fps,
     close: 9 * fps,
+    endCredits: 10 * fps,
   };
   let from = 0;
   const place = (duration: number, child: ReactNode) => {
@@ -421,8 +462,9 @@ export const RationaleOpsVideo = () => {
       {place(scenes.trust, <TrustScene duration={scenes.trust} />)}
       {place(scenes.proof, <ProofScene duration={scenes.proof} />)}
       {place(scenes.close, <ClosingScene duration={scenes.close} />)}
+      {place(scenes.endCredits, <EndCreditsScene duration={scenes.endCredits} />)}
     </AbsoluteFill>
   );
 };
 
-export const VIDEO_DURATION_FRAMES = 110 * 30;
+export const VIDEO_DURATION_FRAMES = 120 * 30;
