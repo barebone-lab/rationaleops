@@ -179,7 +179,8 @@ class DataHubMcpReader:
                 dict.fromkeys(
                     item["urn"]
                     for item in (
-                        (owner_info.get("admins") or []) + (owner_info.get("members") or [])
+                        (owner_info.get("admins") or [])
+                        + (owner_info.get("members") or [])
                     )
                     if item.get("urn")
                 )
@@ -241,7 +242,8 @@ class DataHubMcpReader:
 
         try:
             return await asyncio.wait_for(_collect_and_map(), timeout=total_timeout)
-        except asyncio.TimeoutError:
+        except TimeoutError:
             raise DataHubMcpError(
-                f"DataHub MCP read timed out after {total_timeout:.0f}s for {dataset_urn}"
+                f"DataHub MCP read timed out after "
+                f"{total_timeout:.0f}s for {dataset_urn}"
             ) from None
