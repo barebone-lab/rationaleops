@@ -3,7 +3,16 @@ from __future__ import annotations
 import asyncio
 from unittest.mock import AsyncMock
 
-from rationaleops.datahub_mcp import DataHubMcpReader
+import pytest
+
+from rationaleops.datahub_mcp import DataHubMcpError, DataHubMcpReader
+
+
+def test_preflight_health_check_fails_unreachable() -> None:
+    """When the GMS is unreachable the pre-flight should raise in ~5 s."""
+    reader = DataHubMcpReader(server="http://127.0.0.1:19999", timeout_seconds=1.0)
+    with pytest.raises(DataHubMcpError, match=r"unreachable"):
+        asyncio.run(reader._check_server_reachable())
 
 
 def test_mcp_evidence_maps_to_typed_query_context() -> None:
@@ -11,6 +20,7 @@ def test_mcp_evidence_maps_to_typed_query_context() -> None:
         "urn:li:dataset:(urn:li:dataPlatform:postgres,analytics.revenue_daily,PROD)"
     )
     reader = DataHubMcpReader(server="http://datahub.invalid")
+    reader._check_server_reachable = AsyncMock()  # type: ignore[method-assign]
     reader.collect_evidence = AsyncMock(  # type: ignore[method-assign]
         return_value={
             "get_dataset_queries": {
