@@ -1,29 +1,45 @@
-# RationaleOps
+<div align="center">
+  <img src="web/public/favicon.svg" width="72" alt="RationaleOps logo" />
+  <h1>RationaleOps</h1>
+  <p><strong>The code remembers what. RationaleOps preserves why.</strong></p>
+  <p>
+    A DataHub-grounded agent that finds high-impact decisions hidden in SQL,<br />
+    interviews the people who understand them, and turns confirmed rationale<br />
+    into living context, executable tests, and safe code repairs.
+  </p>
+  <p>
+    <a href="https://barebone-lab.github.io/rationaleops/"><strong>Open dashboard</strong></a>
+    ·
+    <a href="video/out/rationaleops-demo.mp4"><strong>Watch the 120-second demo</strong></a>
+    ·
+    <a href="#quick-start"><strong>Run it locally</strong></a>
+  </p>
+  <p>
+    <a href="https://github.com/barebone-lab/rationaleops/actions/workflows/ci.yml">
+      <img src="https://github.com/barebone-lab/rationaleops/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI status" />
+    </a>
+    <img src="https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white" alt="Python 3.11 or newer" />
+    <img src="https://img.shields.io/badge/DataHub-grounded-00A1E0" alt="DataHub grounded" />
+    <a href="LICENSE">
+      <img src="https://img.shields.io/badge/License-Apache%202.0-7CB342" alt="Apache 2.0 license" />
+    </a>
+  </p>
+</div>
 
-> **The code remembers what. RationaleOps preserves why.**
+<a href="https://barebone-lab.github.io/rationaleops/">
+  <img src="video/public/dashboard-initial.png" alt="RationaleOps dashboard showing DataHub context, ranked SQL decision points, and an evidence-linked owner interview" />
+</a>
 
-**Build with DataHub: The Agent Hackathon · Agents That Do Real Work**
+<p align="center"><em>Three filters. Three different truths. Click the dashboard to explore the recorded workflow.</em></p>
 
-RationaleOps finds high-impact business decisions hidden in SQL, interviews the people who understand them, and turns human-confirmed rationale into living DataHub context, executable tests, and safe code repairs.
+## The problem
 
-**[Open the hosted dashboard](https://barebone-lab.github.io/rationaleops/)** · **[Watch the 120-second demo](video/out/rationaleops-demo.mp4)**
+> **Every strange filter is a rule, a workaround, or a bug. The code alone
+> cannot tell you which.**
 
-## Judge Quick Scan
-
-| In 15 seconds | RationaleOps |
-|---|---|
-| **Real problem** | Data platforms can execute thousands of rules that nobody can still explain. Legacy filters survive after owners leave, definitions change, and temporary workarounds expire. |
-| **What DataHub contributes** | Query history identifies real production SQL; lineage measures blast radius; ownership finds the right expert; glossary and documentation expose conflicts; approved rationale is written back to the graph. |
-| **What the agent does** | It mines a high-risk SQL decision point, conducts an adaptive Cognitive Task Analysis interview, obtains human confirmation, and creates a test, documentation update, or repair proposal. |
-| **Why an LLM is essential** | Syntax cannot reveal whether a rule is policy, workaround, or bug. The agent must understand vague explanations, domain language, exceptions, contradictions, temporal scope, and counterfactuals. |
-| **Visible wow moment** | Three similar filters become three different cards: `CONFIRMED RULE`, `EXPIRED WORKAROUND`, and `DOCUMENTATION DRIFT`, followed by a passing test, a validated patch, and DataHub write-back. |
-| **Trust model** | The LLM asks and structures. An authorized human confirms intent. Deterministic code verifies implementation. |
-
-## The One-Line Problem
-
-> **Every strange filter is a rule, a workaround, or a bug. The code alone cannot tell you which.**
-
-Consider a model used by an executive revenue dashboard and 47 downstream assets:
+Data platforms can execute thousands of business rules that nobody can still
+explain. Legacy filters survive after owners leave, definitions change, and
+temporary workarounds quietly become permanent.
 
 ```sql
 WHERE activity_at >= current_date - interval '37 days'
@@ -31,129 +47,171 @@ WHERE activity_at >= current_date - interval '37 days'
   AND account_status NOT IN ('trial', 'refunded')
 ```
 
-Lineage can show where this logic flows. A SQL parser can identify every predicate. Neither can reliably answer:
+Lineage shows where this logic flows. A parser identifies every predicate. But
+neither can reliably explain why the window is 37 days, whether Germany should
+still be excluded, which exceptions apply, or who has authority to approve a
+change.
 
-- Why 37 days instead of the 30-day glossary definition?
-- Is the Germany exclusion permanent or tied to a completed migration?
-- Does the active-customer definition contain exceptions?
-- Who approved each decision?
-- When does it expire, and which test proves the code still matches its intent?
+## At a glance
 
-This missing `WHY` is institutional knowledge. Today it is recovered through expensive workshops, code archaeology, scattered messages, or the memory of a person who may already have left.
+| | RationaleOps |
+|---|---|
+| **Finds** | Non-obvious SQL decisions with high usage, large blast radius, weak ownership, or stale rationale |
+| **Grounds** | Every investigation in DataHub query history, lineage, ownership, schema, glossary, and documentation |
+| **Asks** | Adaptive Cognitive Task Analysis questions about intent, cues, exceptions, counterfactuals, and expiry |
+| **Produces** | A human-confirmed Decision Contract plus a validated test, context update, or repair proposal |
+| **Protects** | Unconfirmed rationale never becomes authoritative context; every mutation requires explicit approval |
 
-## The 45-Second Demo Story
-
-The demo begins with the three SQL filters above. They look almost identical. RationaleOps uses DataHub to show their shared 47-asset blast radius and locate the responsible owner.
-
-During a live adaptive interview:
-
-1. **37-day activity window → `CONFIRMED RULE`**
-
-   Finance introduced a seven-day settlement grace period. A follow-up question uncovers a prepaid-account exception. RationaleOps creates a Decision Contract and dbt test.
-
-2. **Germany exclusion → `EXPIRED WORKAROUND`**
-
-   A legal hold was meant to last only until an EU billing migration completed. It ended last month. RationaleOps generates a removal patch and validates the downstream sample diff.
-
-3. **Trial and refund exclusion → `DOCUMENTATION DRIFT`**
-
-   The SQL is correct, but the active-customer glossary entry is stale. RationaleOps proposes a linked context update rather than changing code.
-
-The closing screen shows the approved rationale, owner, evidence, lifecycle, test result, and repair status written back to DataHub.
-
-## Official Judging Criteria Alignment
-
-These are the five official criteria recorded in the local [Hackathon Brief](docs/HACKATHON_BRIEF.md#5-judging-criteria). Each row maps a criterion to visible demo evidence and detailed repository evidence.
-
-| Official criterion | What RationaleOps demonstrates | Concrete demo evidence | Repository evidence |
-|---|---|---|---|
-| **Use of DataHub** | DataHub is not a decorative lookup. Query history, table and column lineage, ownership, schemas, glossary, documentation, tags, and structured properties drive candidate selection, risk ranking, interview grounding, and write-back. | Show the exact production query, 47 downstream assets, owner resolution, glossary conflict, and approved rationale visible after write-back. | [DataHub integration](DEVELOPMENT.md#7-datahub-integration), [agent workflow](DEVELOPMENT.md#6-agent-workflow) |
-| **Technical Execution** | A complete typed loop combines deterministic SQL AST mining, transparent graph-based ranking, a multi-turn agent, evidence-linked states, human approval, test or patch generation, deterministic validation, and DataHub mutation. | Start with raw SQL and finish with a valid Decision Contract, passing dbt test, validated patch, and retrievable DataHub context. | [Technical architecture](DEVELOPMENT.md#15-technical-architecture), [test strategy](DEVELOPMENT.md#16-test-strategy), [Decision Contract](DEVELOPMENT.md#11-decision-contract) |
-| **Originality** | RationaleOps applies Cognitive Task Analysis and the Critical Decision Method—used to elicit tacit expertise in high-risk domains—to decision points discovered through data lineage. It closes the gap between executable `WHAT` and authorized `WHY`. | The agent does not explain SQL generically. It asks incident, cue, exception, expiry, and counterfactual probes that change according to the owner's answers. | [Cross-disciplinary design](DEVELOPMENT.md#3-cross-disciplinary-design-cognitive-task-analysis), [user-pain research](docs/USER_PAIN_RESEARCH.md) |
-| **Real-World Usefulness** | The product targets undocumented business logic, metric disagreement, owner departure, stale context, and temporary workarounds that quietly become permanent. It prioritizes the few interviews with the largest risk reduction. | One interview prevents an incorrect glossary update, identifies an expired production filter, and preserves an exception as an executable regression test. | [Product problem](DEVELOPMENT.md#4-product-problem), [official and community evidence](docs/USER_PAIN_RESEARCH.md) |
-| **Submission Quality** | The story is intentionally visual: three similar filters become three distinct outcomes. Every action has evidence, status, and a visible before-and-after result. | The first 15 seconds state the problem; the first 90 seconds reveal three outcome cards; the final minute shows action, validation, and DataHub write-back. | [Three-minute script](DEVELOPMENT.md#three-minute-script), [golden-demo invariant](DEVELOPMENT.md#golden-demo-invariant) |
-
-### Open-Source Contribution Bonus
-
-The planned reusable contribution is a DataHub **rationale-audit Skill** plus an open Decision Contract schema and reproducible demo fixtures. These artifacts let other DataHub users detect undocumented decision points and add their own interview and approval workflows.
-
-## Why This Is Not Another Lineage Map
-
-DataHub already captures and displays lineage. RationaleOps treats that graph as a risk radar rather than redrawing it.
-
-| Existing capability | What it answers | What remains unresolved |
-|---|---|---|
-| SQL parsing | Which predicates, joins, constants, and branches exist? | Why were they chosen? |
-| Lineage | Which assets depend on this transformation? | Is the decision still valid? |
-| Ownership | Who is responsible for the asset? | What does that person know that was never written down? |
-| Glossary and documentation | What definition is currently recorded? | Is it authoritative, stale, incomplete, or contradicted by implementation? |
-| AI-generated documentation | What does the model infer the code probably does? | Which intent has been confirmed by someone with authority? |
-
-RationaleOps begins where the map stops:
-
-```text
-DataHub:      WHAT changed, WHERE it flows, WHO owns it
-RationaleOps: WHY it exists, WHEN it expires, WHICH exceptions apply
-```
-
-## Why This Cannot Be Simple Automation
-
-| Deterministic code | DeepSeek V4-Pro agent | Human authority |
-|---|---|---|
-| Parse SQL and produce stable fingerprints | Explain a decision point in domain language | Confirm or correct business intent |
-| Calculate usage and downstream blast radius | Interpret vague answers and terminology | Identify the true approving authority |
-| Detect documentation gaps and literal conflicts | Ask adaptive exception and counterfactual questions | Resolve organizational disagreement |
-| Validate a generated test or patch | Structure evidence into a typed draft | Approve publication or code change |
-
-The safety boundary is explicit:
-
-> **The LLM discovers questions and structures answers. Humans authorize intent. Code verifies implementation.**
-
-## End-to-End Architecture
+## How it works
 
 ```mermaid
-flowchart LR
-    A["DataHub query history, lineage, schema, owners, glossary"] --> B["Deterministic SQL decision-point miner"]
-    B --> C["Transparent knowledge-risk ranking"]
-    C --> D["DeepSeek V4-Pro agent"]
-    D --> E["Adaptive CTA / CDM interview"]
-    E --> F["Evidence-linked Decision Contract draft"]
-    F --> G["Human confirmation"]
-    G --> H["Test, context update, or repair proposal"]
-    H --> I["Deterministic validation"]
-    I --> J["Approved DataHub write-back"]
-    J --> K["Expiry and drift revalidation"]
+flowchart TD
+    A["1 · Discover<br/>DataHub context + risk radar"]
+    B["2 · Investigate<br/>Adaptive owner interview"]
+    C{"3 · Confirm<br/>Authorized human?"}
+    D["Stop<br/>Hypothesis only"]
+    E["4 · Operationalize<br/>Test · patch · context update"]
+    F["5 · Verify + preserve<br/>Deterministic check · approved write-back"]
+
+    A --> B --> C
+    C -- "No" --> D
+    C -- "Yes" --> E
+    E --> F
 ```
 
 ```text
 Detect → Prioritize → Hypothesize → Interview → Confirm → Operationalize → Verify → Preserve
 ```
 
-## DataHub Integration Depth
+## Three filters, three different truths
 
-### Reads through MCP Server or Agent Context Kit
+The recorded demo begins with one production model serving an executive revenue
+dashboard and 47 downstream assets. Its three similar-looking predicates lead
+to three different actions:
 
-| DataHub capability | Product use |
+| Decision point | What the interview reveals | Safe outcome |
+|---|---|---|
+| `activity_at >= … '37 days'` | Finance deliberately added a seven-day settlement grace period; prepaid accounts remain on 30 days | **Confirmed rule** → Decision Contract and passing SQL acceptance test |
+| `country_code <> 'DE'` | A temporary legal hold should have ended when the EU billing migration completed | **Expired workaround** → removal patch and sample regression validation |
+| `account_status NOT IN (…)` | The implementation is correct, but the Active Customer definition is stale | **Documentation drift** → linked glossary and context update |
+
+The visible result is not an AI-generated explanation. It is an
+evidence-linked, owner-confirmed decision with lifecycle metadata and a
+deterministically checked action.
+
+## Quick start
+
+The full recorded workflow needs neither an API key nor a live DataHub instance.
+
+**Prerequisites:** Python 3.11 or newer and [`uv`](https://docs.astral.sh/uv/).
+
+```bash
+git clone https://github.com/barebone-lab/rationaleops.git
+cd rationaleops
+uv sync --dev --extra mcp
+make demo
+```
+
+Expected result:
+
+```text
+Decision points found: 3
+Outcomes: CONFIRMED_RULE, EXPIRED_WORKAROUND, DOCUMENTATION_DRIFT
+Active-window test passes: True
+Germany-removal patch passes: True
+Documentation update valid: True
+Recorded write-backs visible: True
+```
+
+Artifacts are written to `.rationaleops/full-demo/`. You can also inspect the
+committed [recorded example](examples/recorded/summary.json).
+
+<details>
+<summary><strong>Run individual checks or install every workspace dependency</strong></summary>
+
+```bash
+# Mine the bundled SQL decision points
+uv run rationaleops mine
+
+# Run backend tests and linting
+uv run pytest
+uv run ruff check src tests
+
+# Install Python, dashboard, MCP, and video dependencies
+make setup
+
+# Run the complete verification suite
+make verify
+```
+
+Omit either approval flag from the underlying `demo-all` command to inspect the
+corresponding safety gate. Recorded commands never read live DataHub
+credentials.
+
+</details>
+
+## Why DataHub is essential
+
+DataHub is not a decorative lookup or a lineage map redrawn in another UI. Its
+graph acts as the evidence layer and risk radar for the investigation.
+
+```mermaid
+flowchart TD
+    A["DataHub reads<br/>Queries · lineage · owners<br/>Glossary · schemas"]
+    B["RationaleOps investigation<br/>Risk radar · owner interview<br/>Decision Contract"]
+    C["Deterministic validation<br/>Test · patch · context"]
+    D["DataHub write-back<br/>Context · tags · audit evidence"]
+
+    A --> B --> C
+    C -->|"Approved only"| D
+```
+
+| DataHub provides | RationaleOps adds |
 |---|---|
-| Dataset queries and query history | Retrieve production SQL, usage evidence, filters, joins, and `CASE` expressions |
-| Table and column lineage | Calculate blast radius and connect a decision to dashboards and models |
-| Entity metadata | Read owners, descriptions, terms, tags, and structured properties |
-| Schema fields | Ground the interview and validate referenced columns and types |
-| Search | Find related rules, duplicated literals, glossary terms, and conflicting assets |
+| **What** the SQL does | **Why** the organization chose it |
+| **Where** the logic flows | **When** it expires or needs review |
+| **Who** owns the affected assets | **Which** exceptions and evidence define its boundary |
 
-### Approved writes through SDK or GraphQL
+The live path reads queries, lineage, entities, owners, glossary terms, and
+schemas through the official DataHub MCP server. Approved context, status,
+evidence, tags, and action receipts are written through the SDK or GraphQL and
+then read back to verify preservation.
 
-- Linked Context Document or equivalent documentation aspect.
-- Decision status, owner, evidence, effective date, expiry, and review trigger.
-- Glossary-definition proposal.
-- `RationaleVerified` or `RationaleNeedsReview` tag.
-- Test, assertion, repair, and audit evidence linked to affected assets.
+## Trust by design
 
-The golden path requires at least one real DataHub mutation and a subsequent read proving that the context was preserved.
+> **The LLM discovers questions and structures answers. Humans authorize
+> intent. Code verifies implementation.**
 
-## Decision Contract and Truth States
+```mermaid
+flowchart TD
+    A["HYPOTHESIS<br/>Not authoritative"]
+    B["OWNER_STATED<br/>Evidence captured"]
+    C{"Authorized confirmation?"}
+    D["CONFIRMED<br/>May be published"]
+    E["CONTRADICTED or ORPHANED<br/>Publication blocked"]
+    F["EXPIRED<br/>Review required"]
 
-Every rationale is attached to an exact SQL fingerprint and remains non-authoritative until approved.
+    A -->|"Owner supplies evidence"| B
+    B --> C
+    C -->|"Yes"| D
+    C -->|"Conflict or no authority"| E
+    D -->|"Expiry condition reached"| F
+```
+
+Only `CONFIRMED` content may become authoritative DataHub context. The system
+also enforces these boundaries:
+
+- Every material claim links to an interview turn or existing source.
+- `unknown` is a valid answer; the model must not fill the gap.
+- Conflicting evidence produces `CONTRADICTED`, not an LLM-selected winner.
+- Tests, patches, and sample comparisons are deterministic.
+- DataHub mutations require explicit, item-by-item approval.
+- Recorded fixtures contain no production metadata or sensitive transcripts.
+
+## Decision Contract
+
+Every rationale is attached to the exact SQL fragment and a stable fingerprint.
+It remains non-authoritative until an authorized person confirms it.
 
 ```yaml
 id: decision-active-window-v1
@@ -180,177 +238,12 @@ verification:
     - tests/test_active_window.sql
 ```
 
-Truth states prevent plausible model output from silently becoming policy:
+## Run the live integrations
 
-- `HYPOTHESIS`
-- `OWNER_STATED`
-- `CONFIRMED`
-- `CONTRADICTED`
-- `EXPIRED`
-- `ORPHANED`
+### DataHub OSS
 
-Only `CONFIRMED` content may become authoritative DataHub context.
-
-## Safety and Evaluation
-
-- No human evidence and confirmation means no published rationale.
-- Every material claim points to an interview turn or existing source.
-- `unknown` is a valid answer; the model must not fill the gap.
-- Conflicting owners produce `CONTRADICTED`, not an LLM-selected winner.
-- Code patches remain drafts until tests, linting, compilation, and sample comparisons pass.
-- DataHub mutations require explicit, item-by-item approval.
-- Sensitive transcripts and production metadata must not enter public fixtures or logs.
-- A deterministic recorded mode keeps the judge demo reproducible without an API key.
-
-The golden-demo invariant is:
-
-```text
-decision_points_found = 3
-outcomes = {CONFIRMED_RULE, EXPIRED_WORKAROUND, DOCUMENTATION_DRIFT}
-unconfirmed_rationale_published = 0
-generated_test_passes = true
-expired_workaround_patch_passes = true
-datahub_write_back_visible = true
-```
-
-## Implementation Status
-
-The complete three-outcome workflow runs in deterministic recorded mode and has
-also been verified against a live local DataHub OSS graph and the live DeepSeek
-API. Recorded fixtures remain clearly labelled; they are not used as evidence
-for the live integration checks.
-
-- [x] Validated problem and evidence base
-- [x] Hackathon requirements and official scoring map
-- [x] Product architecture, trust boundary, and typed contract design
-- [x] Reproducible hero scenario and three-minute script
-- [x] DeepSeek V4-Pro configuration
-- [x] Bundled query, glossary, owner, and 47-downstream recorded fixture
-- [x] SQLGlot decision-point miner with stable fingerprints
-- [x] Transparent fixture-backed knowledge-risk ranker
-- [x] Adaptive recorded CTA interviews for all three rules
-- [x] Typed Decision Contract and authorization-gated confirmation
-- [x] SQL acceptance-test generation and DuckDB validation
-- [x] Separate approval gate plus recorded write/read verification
-- [x] Three-outcome recorded fallback with committed sample outputs
-- [x] Live DataHub SDK writer implementation
-- [x] Seeded 47-asset DataHub OSS graph
-- [x] Official DataHub MCP reads for query, lineage, entity, owner, glossary, and schema
-- [x] Live DeepSeek V4-Pro adaptive interview path with typed JSON output
-- [x] FastAPI + SQLite workflow and audit-event persistence
-- [x] Interactive three-pane web confirmation and evidence interface
-- [x] Germany-removal repair generation and sample regression validation
-- [x] Explicitly approved real DataHub write-back and read-after-write verification
-- [x] Reusable `rationale-audit` DataHub skill
-- [x] GitHub Pages hosted dashboard
-- [x] Final browser demo recording and under-three-minute video
-
-Progress is measured against the full [Definition of Done](DEVELOPMENT.md#20-definition-of-done).
-
-## Repository Layout
-
-```text
-.
-├── DEVELOPMENT.md                 # Product, architecture, demo, and implementation plan
-├── src/rationaleops/
-│   ├── mining.py                  # Deterministic SQL AST candidate extraction
-│   ├── risk.py                    # Transparent knowledge-risk formula
-│   ├── interview.py               # Recorded adaptive CTA workflow
-│   ├── contracts.py               # Contract drafting and truth-state guards
-│   ├── artifacts.py               # SQL test generation and execution
-│   ├── datahub_mcp.py             # Official MCP server read adapter
-│   ├── datahub_seed.py            # Idempotent 47-asset DataHub demo seeder
-│   ├── datahub_gateway.py         # Approval-gated SDK write adapter
-│   ├── llm.py                     # Typed DeepSeek CTA agent
-│   ├── storage.py                 # SQLite workflow and event persistence
-│   ├── service.py                 # Interactive trust-boundary service
-│   ├── api.py                     # FastAPI application
-│   └── full_workflow.py           # Complete three-outcome orchestration
-├── web/                           # Interactive dashboard and GitHub Pages build
-├── video/                         # Remotion source and 120-second MP4 demo
-├── skills/rationale-audit/        # Reusable DataHub rationale-audit skill
-├── tests/                         # Unit and end-to-end safety tests
-├── examples/recorded/             # Three contracts, transcripts, actions, and receipts
-├── docs/
-│   ├── HACKATHON_BRIEF.md         # Rules, deliverables, and judging criteria
-│   └── USER_PAIN_RESEARCH.md      # Official and community evidence
-├── .env.example                   # Safe local configuration template
-├── main.py                        # CLI-compatible development entry point
-└── pyproject.toml                 # Python project metadata
-```
-
-## Local Setup
-
-Prerequisites:
-
-- Python 3.11 or newer
-- [`uv`](https://docs.astral.sh/uv/)
-- Node.js 22.13 or newer for the dashboard
-- A local or reachable DataHub OSS instance for live integration
-- A DeepSeek API key for live LLM calls
-
-Install every Python, dashboard, MCP, and video dependency in one command:
-
-```bash
-git clone https://github.com/barebone-lab/rationaleops.git
-cd rationaleops
-make setup
-```
-
-This also creates `.env` from the safe example when it does not already exist.
-Add credentials only when using the live integrations.
-
-Equivalent manual setup:
-
-```bash
-uv sync --dev --extra mcp
-cp .env.example .env
-npm --prefix web ci
-npm --prefix video ci
-```
-
-The full recorded demo needs neither a DeepSeek key nor a live DataHub. The two
-approval flags cover validated recorded actions and in-memory fixture writes
-only:
-
-```bash
-make demo
-# or
-uv run rationaleops demo-all \
-  --approve-actions \
-  --approve-writeback
-```
-
-Expected result:
-
-```text
-Decision points found: 3
-Outcomes: CONFIRMED_RULE, EXPIRED_WORKAROUND, DOCUMENTATION_DRIFT
-Active-window test passes: True
-Germany-removal patch passes: True
-Documentation update valid: True
-Recorded write-backs visible: True
-```
-
-Artifacts are written to `.rationaleops/full-demo/`. Inspect the committed
-[recorded example](examples/recorded/summary.json), mine the bundled SQL, or run
-the full suite:
-
-```bash
-make verify
-# or run individual checks
-uv run rationaleops mine
-uv run pytest
-uv run ruff check src tests
-uv build
-```
-
-Omit either approval flag to inspect the corresponding safety gate. Recorded
-commands never read live DataHub credentials.
-
-### Live DataHub OSS path
-
-Start DataHub OSS, seed the graph idempotently, and prove the official MCP reads:
+Start DataHub, seed the demo graph idempotently, and prove the official MCP
+reads:
 
 ```bash
 datahub docker quickstart
@@ -358,7 +251,7 @@ uv run rationaleops seed-datahub
 uv run rationaleops inspect-datahub
 ```
 
-The expected MCP context contains the production query, Finance owner, Active
+The expected context contains the production query, Finance owner, Active
 Customer glossary term, schema fields, and exactly 47 downstream entities.
 
 Publish one verified contract only after naming the exact item and authorized
@@ -375,13 +268,13 @@ is retrievable.
 
 ### API and dashboard
 
-Run the stateful local API:
+Run the stateful API:
 
 ```bash
 uv run rationaleops-api
 ```
 
-In a second terminal:
+Then start the dashboard in a second terminal:
 
 ```bash
 cd web
@@ -389,29 +282,13 @@ npm install
 NEXT_PUBLIC_RATIONALEOPS_API_URL=http://127.0.0.1:8000 npm run dev
 ```
 
-The dashboard remains fully usable in recorded mode when no backend or LLM key
-is available. With the API connected, confirmations, artifact approvals,
-interview turns, and write-back receipts are persisted in SQLite.
+Without the API, the dashboard remains fully usable in deterministic recorded
+mode. With the API connected, interviews, confirmations, artifact approvals,
+and write-back receipts are persisted in SQLite.
 
-The public GitHub Pages dashboard is available at
-<https://barebone-lab.github.io/rationaleops/>.
+### DeepSeek agent
 
-### Demo video
-
-The committed 120-second text-led walkthrough uses screenshots from the real
-dashboard and remains reproducible from its Remotion source:
-
-```bash
-cd video
-npm install
-npm run render
-```
-
-The rendered submission is [`video/out/rationaleops-demo.mp4`](video/out/rationaleops-demo.mp4).
-
-## LLM Configuration
-
-RationaleOps uses DeepSeek V4-Pro through the OpenAI-compatible DeepSeek API:
+RationaleOps uses DeepSeek V4-Pro through its OpenAI-compatible API:
 
 ```dotenv
 DEEPSEEK_API_KEY=replace-with-your-deepseek-api-key
@@ -421,13 +298,71 @@ DEEPSEEK_THINKING_ENABLED=true
 DEEPSEEK_REASONING_EFFORT=high
 ```
 
-`.env` is ignored by Git. Never commit API keys, interview transcripts, production metadata, or sensitive fixtures.
+`.env` is ignored by Git. Never commit API keys, sensitive interviews,
+production metadata, or private fixtures.
+
+## What ships today
+
+| Capability | Implementation |
+|---|---|
+| Deterministic SQL decision mining and stable fingerprints | SQLGlot-based miner |
+| Transparent knowledge-risk ranking | Fixture-backed graph scoring |
+| Adaptive owner interviews | Recorded and live DeepSeek paths |
+| Authorization-gated Decision Contracts | Typed Pydantic models and transition guards |
+| Operational actions | SQL tests, documentation updates, and repair patches |
+| Deterministic verification | DuckDB tests and sample regression comparisons |
+| DataHub integration | Official MCP reads plus SDK write/read verification |
+| Interactive workflow | FastAPI, SQLite audit events, and a three-pane dashboard |
+| Reproducible submission | GitHub Pages dashboard and a committed 120-second video |
+
+See the complete [Definition of Done](DEVELOPMENT.md#20-definition-of-done) and
+[test strategy](DEVELOPMENT.md#16-test-strategy).
+
+## Repository map
+
+```text
+.
+├── src/rationaleops/             # Agent workflow, contracts, integrations, and API
+├── tests/                        # Unit and end-to-end safety tests
+├── web/                          # Interactive dashboard and GitHub Pages build
+├── video/                        # Remotion source and 120-second demo
+├── skills/rationale-audit/       # Reusable DataHub rationale-audit skill
+├── examples/recorded/            # Contracts, interviews, actions, and receipts
+├── docs/                         # Hackathon brief and user-pain research
+├── DEVELOPMENT.md                # Product and technical deep dive
+├── Makefile                      # Setup, demo, verification, and run targets
+└── pyproject.toml                # Python package and dependency metadata
+```
+
+## Hackathon alignment
+
+RationaleOps was built for **Build with DataHub: The Agent Hackathon — Agents
+That Do Real Work**.
+
+<details>
+<summary><strong>Open the official judging-criteria map</strong></summary>
+
+| Criterion | Visible evidence | Repository evidence |
+|---|---|---|
+| **Use of DataHub** | Production query, 47-asset blast radius, owner and glossary grounding, approved write-back | [DataHub integration](DEVELOPMENT.md#7-datahub-integration) |
+| **Technical Execution** | Typed mining-to-write-back loop, passing test, validated patch, and retrievable context | [Architecture](DEVELOPMENT.md#15-technical-architecture), [test strategy](DEVELOPMENT.md#16-test-strategy) |
+| **Originality** | Cognitive Task Analysis elicits intent and exceptions that syntax cannot reveal | [Cross-disciplinary design](DEVELOPMENT.md#3-cross-disciplinary-design-cognitive-task-analysis) |
+| **Real-World Usefulness** | One investigation separates a rule, expired workaround, and documentation drift | [Product problem](DEVELOPMENT.md#4-product-problem), [research](docs/USER_PAIN_RESEARCH.md) |
+| **Submission Quality** | Hosted interactive dashboard, deterministic fixtures, and an under-three-minute demo | [Demo script](DEVELOPMENT.md#three-minute-script) |
+
+The reusable contribution is an open `rationale-audit` DataHub skill, an open
+Decision Contract format, and reproducible fixtures that other teams can extend.
+
+</details>
 
 ## Documentation
 
-- [Development plan](DEVELOPMENT.md)
+- [Development and architecture](DEVELOPMENT.md)
+- [Recorded example](examples/README.md)
 - [Hackathon brief](docs/HACKATHON_BRIEF.md)
 - [User-pain research](docs/USER_PAIN_RESEARCH.md)
+- [Dashboard setup](web/README.md)
+- [Demo video source](video/README.md)
 
 ## License
 
