@@ -1,6 +1,6 @@
 # RationaleOps Dashboard
 
-Production: <https://rationaleops-datahub.billycpl.chatgpt.site>
+Production: <https://barebone-lab.github.io/rationaleops/>
 
 The interactive hero workspace presents the complete trust chain in three panes:
 
@@ -8,7 +8,18 @@ The interactive hero workspace presents the complete trust chain in three panes:
 2. Deterministically mined and ranked SQL decision points.
 3. CTA interview, Decision Contract, verified artifact, approval, and write-back.
 
-## Run locally
+## GitHub Pages
+
+The production source lives in `gh-pages/` and is deployed by
+`.github/workflows/deploy.yml` whenever that directory changes on `main`.
+
+```bash
+cd gh-pages
+npm ci
+npm run dev
+```
+
+## Run the full-stack dashboard locally
 
 ```bash
 npm install
@@ -31,6 +42,6 @@ npm test
 npm audit --omit=dev
 ```
 
-`npm test` builds the Cloudflare-compatible vinext output and verifies the
+`npm test` builds the vinext output and verifies the
 server-rendered hero story, all three outcomes, approval flow, and production
 metadata.

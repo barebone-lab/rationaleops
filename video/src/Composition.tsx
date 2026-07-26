@@ -402,7 +402,7 @@ const EndCreditsScene = ({ duration }: { duration: number }) => {
               <span style={{ color: COLORS.cyan }}>rationaleops</span>
             </div>
             <div style={{ display: "flex", gap: 16 }}>
-              {["OPEN SOURCE", "MIT LICENSE", "STARRED"].map((tag) => (
+              {["OPEN SOURCE", "APACHE 2.0", "REPRODUCIBLE"].map((tag) => (
                 <span key={tag} style={{ ...monoStyle, border: `2px solid ${COLORS.line}`, padding: "10px 18px", color: COLORS.cyan, fontSize: 16 }}>
                   {tag}
                 </span>

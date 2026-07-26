@@ -1,6 +1,6 @@
 # RationaleOps Demo Video
 
-This Remotion project renders the 110-second, text-led hackathon walkthrough.
+This Remotion project renders the 120-second, text-led hackathon walkthrough.
 It uses screenshots captured from the real interactive dashboard and covers the
 complete story: DataHub evidence, adaptive interview, three distinct outcomes,
 deterministic validation, approval gates, and verified write-back.
@@ -27,4 +27,4 @@ ffprobe -v error \
   out/rationaleops-demo.mp4
 ```
 
-Expected duration: approximately 110 seconds, below the three-minute limit.
+Expected duration: approximately 120 seconds, below the three-minute limit.

@@ -6,7 +6,7 @@
 
 RationaleOps finds high-impact business decisions hidden in SQL, interviews the people who understand them, and turns human-confirmed rationale into living DataHub context, executable tests, and safe code repairs.
 
-**[Open the hosted dashboard](https://barebone-lab.github.io/rationaleops/)** · **[Watch the 110-second demo](video/out/rationaleops-demo.mp4)**
+**[Open the hosted dashboard](https://barebone-lab.github.io/rationaleops/)** · **[Watch the 120-second demo](video/out/rationaleops-demo.mp4)**
 
 ## Judge Quick Scan
 
@@ -242,7 +242,7 @@ for the live integration checks.
 - [x] Germany-removal repair generation and sample regression validation
 - [x] Explicitly approved real DataHub write-back and read-after-write verification
 - [x] Reusable `rationale-audit` DataHub skill
-- [x] Private hosted dashboard
+- [x] GitHub Pages hosted dashboard
 - [x] Final browser demo recording and under-three-minute video
 
 Progress is measured against the full [Definition of Done](DEVELOPMENT.md#20-definition-of-done).
@@ -266,8 +266,8 @@ Progress is measured against the full [Definition of Done](DEVELOPMENT.md#20-def
 │   ├── service.py                 # Interactive trust-boundary service
 │   ├── api.py                     # FastAPI application
 │   └── full_workflow.py           # Complete three-outcome orchestration
-├── web/                           # Interactive React/vinext dashboard
-├── video/                         # Remotion source and 110-second MP4 demo
+├── web/                           # Interactive dashboard and GitHub Pages build
+├── video/                         # Remotion source and 120-second MP4 demo
 ├── skills/rationale-audit/        # Reusable DataHub rationale-audit skill
 ├── tests/                         # Unit and end-to-end safety tests
 ├── examples/recorded/             # Three contracts, transcripts, actions, and receipts
@@ -393,12 +393,12 @@ The dashboard remains fully usable in recorded mode when no backend or LLM key
 is available. With the API connected, confirmations, artifact approvals,
 interview turns, and write-back receipts are persisted in SQLite.
 
-The deployed, owner-only dashboard is available at
+The public GitHub Pages dashboard is available at
 <https://barebone-lab.github.io/rationaleops/>.
 
 ### Demo video
 
-The committed 110-second text-led walkthrough uses screenshots from the real
+The committed 120-second text-led walkthrough uses screenshots from the real
 dashboard and remains reproducible from its Remotion source:
 
 ```bash
