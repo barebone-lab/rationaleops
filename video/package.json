@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "description": "Under-three-minute RationaleOps hackathon demo video",
   "repository": {},
-  "license": "UNLICENSED",
+  "license": "Apache-2.0",
   "private": true,
   "dependencies": {
     "@remotion/cli": "4.0.497",
+    "@remotion/media": "4.0.497",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "remotion": "4.0.497"

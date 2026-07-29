@@ -1,7 +1,7 @@
 import type { CSSProperties, ReactNode } from "react";
+import { Audio, Video } from "@remotion/media";
 import {
   AbsoluteFill,
-  Audio,
   Easing,
   Img,
   interpolate,
@@ -196,24 +196,67 @@ const ContextScene = ({ duration }: { duration: number }) => {
   );
 };
 
-const ScreenshotScene = ({ duration, file, title, zoom = 1 }: { duration: number; file: string; title: string; zoom?: number }) => {
+const WorkflowCaptureScene = ({ duration }: { duration: number }) => {
   const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const stage =
+    frame < 8 * fps
+      ? "ADAPTIVE INTERVIEW"
+      : frame < 12 * fps
+        ? "OWNER CONFIRMS"
+        : frame < 16 * fps
+          ? "ACTION APPROVED"
+          : "DATAHUB WRITE-BACK VERIFIED";
   return (
-    <Scene duration={duration}>
-      <h2 style={{ ...headlineStyle, fontSize: 72, marginTop: 15, ...enter(frame, 16) }}>{title}</h2>
-      <div style={{ flex: 1, overflow: "hidden", border: `2px solid ${COLORS.line}`, backgroundColor: "#0b100c", ...enter(frame, 30) }}>
-        <Img
-          src={staticFile(file)}
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            objectPosition: "center top",
-            scale: interpolate(frame, [30, duration - 25], [zoom, zoom + 0.035], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: ease }),
-          }}
-        />
+    <AbsoluteFill
+      style={{
+        backgroundColor: COLORS.ink,
+        opacity: interpolate(frame, [0, 12, duration - 12, duration], [0, 1, 1, 0], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+        }),
+      }}
+    >
+      <Video
+        src={staticFile("dashboard-workflow.mp4")}
+        muted
+        objectFit="cover"
+        style={{ width: "100%", height: "100%" }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          top: 18,
+          left: "50%",
+          transform: "translateX(-50%)",
+          padding: "10px 22px",
+          border: `2px solid ${COLORS.line}`,
+          backgroundColor: "rgba(11, 16, 12, 0.94)",
+          color: COLORS.cyan,
+          fontSize: 25,
+          letterSpacing: 2.5,
+          ...monoStyle,
+        }}
+      >
+        REAL DASHBOARD · RECORDED WORKFLOW
       </div>
-    </Scene>
+      <div
+        style={{
+          position: "absolute",
+          left: 78,
+          bottom: 70,
+          borderLeft: `6px solid ${COLORS.acid}`,
+          backgroundColor: "rgba(11, 16, 12, 0.94)",
+          padding: "18px 26px",
+          color: COLORS.paper,
+          fontSize: 32,
+          letterSpacing: 2,
+          ...monoStyle,
+        }}
+      >
+        {stage}
+      </div>
+    </AbsoluteFill>
   );
 };
 
@@ -344,8 +387,8 @@ const ProofScene = ({ duration }: { duration: number }) => {
           <div>  <span style={{ color: COLORS.cyan }}>&quot;contract_id&quot;</span>: &quot;decision-active-window-v1&quot;,</div>
           <div>  <span style={{ color: COLORS.cyan }}>&quot;status&quot;</span>: <span style={{ color: COLORS.acid }}>&quot;CONFIRMED&quot;</span>,</div>
           <div>  <span style={{ color: COLORS.cyan }}>&quot;outcome&quot;</span>: &quot;CONFIRMED_RULE&quot;,</div>
-          <div>  <span style={{ color: COLORS.cyan }}>&quot;retrievable&quot;</span>: <span style={{ color: COLORS.acid }}>true</span>,</div>
-          <div>  <span style={{ color: COLORS.cyan }}>&quot;stored_fields&quot;</span>: 21</div>
+          <div>  <span style={{ color: COLORS.cyan }}>&quot;mode&quot;</span>: &quot;datahub-sdk&quot;,</div>
+          <div>  <span style={{ color: COLORS.cyan }}>&quot;retrievable&quot;</span>: <span style={{ color: COLORS.acid }}>true</span></div>
           <div style={{ color: COLORS.muted }}>{"}"}</div>
           <div style={{ marginTop: 28, borderTop: `1px solid ${COLORS.line}`, paddingTop: 24, color: COLORS.acid }}>✓ WRITE-BACK VERIFIED</div>
         </div>
@@ -420,10 +463,9 @@ export const RationaleOpsVideo = () => {
   const scenes = {
     hook: 12 * fps,
     context: 12 * fps,
-    radar: 10 * fps,
+    workflow: 19 * fps,
     interview: 14 * fps,
     outcomes: 13 * fps,
-    artifactScreenshot: 9 * fps,
     artifacts: 11 * fps,
     trust: 10 * fps,
     proof: 10 * fps,
@@ -437,9 +479,8 @@ export const RationaleOpsVideo = () => {
     return <Sequence key={start} from={start} durationInFrames={duration}>{child}</Sequence>;
   };
   // ── Background music ─────────────────────────────────────────
-  // Mixkit royalty-free track — no attribution required.
-  // To try other tracks, download from mixkit.co and replace
-  // public/music/bg-music.mp3, then adjust the filename here.
+  // “Close Up” by Michael Ramir C. — Mixkit Stock Music Free License.
+  // Full source and license provenance: public/music/README.md.
   // ──────────────────────────────────────────────────────────────
   const musicVolume = 0.18;
 
@@ -454,10 +495,9 @@ export const RationaleOpsVideo = () => {
       {/* ── scenes ── */}
       {place(scenes.hook, <HookScene duration={scenes.hook} />)}
       {place(scenes.context, <ContextScene duration={scenes.context} />)}
-      {place(scenes.radar, <ScreenshotScene duration={scenes.radar} file="dashboard-initial.png" title="Mine the exact SQL. Rank the knowledge risk." />)}
+      {place(scenes.workflow, <WorkflowCaptureScene duration={scenes.workflow} />)}
       {place(scenes.interview, <InterviewScene duration={scenes.interview} />)}
       {place(scenes.outcomes, <OutcomesScene duration={scenes.outcomes} />)}
-      {place(scenes.artifactScreenshot, <ScreenshotScene duration={scenes.artifactScreenshot} file="dashboard-action.png" title="Owner-confirmed intent becomes a passing test." zoom={1.01} />)}
       {place(scenes.artifacts, <ArtifactsScene duration={scenes.artifacts} />)}
       {place(scenes.trust, <TrustScene duration={scenes.trust} />)}
       {place(scenes.proof, <ProofScene duration={scenes.proof} />)}

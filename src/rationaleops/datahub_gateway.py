@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Mapping
 from datetime import UTC, datetime
 from importlib.resources import files
 from typing import Any
@@ -146,6 +147,22 @@ class DataHubSdkWriter:
         )
         return properties
 
+    @staticmethod
+    def _mismatched_property_keys(
+        *,
+        expected: Mapping[str, str],
+        persisted: Mapping[str, str],
+    ) -> tuple[str, ...]:
+        """Return every contract property that failed the DataHub read-back."""
+
+        return tuple(
+            sorted(
+                key
+                for key, expected_value in expected.items()
+                if persisted.get(key) != expected_value
+            )
+        )
+
     def test_connection(self) -> None:
         self._client.test_connection()
 
@@ -161,8 +178,9 @@ class DataHubSdkWriter:
         if not isinstance(entity, Dataset):
             raise WriteBackError("write-back target is not a DataHub dataset")
 
+        contract_properties = self._contract_properties(contract)
         properties = dict(entity.custom_properties)
-        properties.update(self._contract_properties(contract))
+        properties.update(contract_properties)
         entity.set_custom_properties(properties)
         entity.add_tag("urn:li:tag:RationaleVerified")
         self._client.entities.update(entity)
@@ -170,13 +188,20 @@ class DataHubSdkWriter:
         persisted = self._client.entities.get(contract.implements.dataset_urn)
         if not isinstance(persisted, Dataset):
             raise WriteBackError("unable to retrieve the updated dataset")
-        marker = f"rationaleops.contract.{self._contract_key(contract.id)}.status"
-        retrievable = persisted.custom_properties.get(marker) == contract.status.value
+        mismatched_keys = self._mismatched_property_keys(
+            expected=contract_properties,
+            persisted=persisted.custom_properties,
+        )
+        if mismatched_keys:
+            raise WriteBackError(
+                "unable to verify all contract properties after write-back: "
+                + ", ".join(mismatched_keys)
+            )
         return WriteBackReceipt(
             contract_id=contract.id,
             dataset_urn=contract.implements.dataset_urn,
             mode="datahub-sdk",
             written_by=approval.approved_by,
             written_at=datetime.now(UTC),
-            retrievable=retrievable,
+            retrievable=True,
         )
