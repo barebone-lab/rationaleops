@@ -11,7 +11,7 @@ from typing import Any, Literal
 from rationaleops.contracts import transition_contract
 from rationaleops.datahub_gateway import DataHubSdkWriter, FixtureDataHubGateway
 from rationaleops.full_workflow import run_recorded_full_demo
-from rationaleops.llm import DeepSeekConfig, DeepSeekCTAAgent
+from rationaleops.llm import OpenAICompatibleConfig, OpenAICompatibleCTAAgent
 from rationaleops.models import (
     ActionApproval,
     ActionArtifact,
@@ -407,7 +407,9 @@ class RationaleOpsService:
         )
         turns.append(owner_turn)
         if mode == "live":
-            directive = DeepSeekCTAAgent(DeepSeekConfig.from_env()).next_question(
+            directive = OpenAICompatibleCTAAgent(
+                OpenAICompatibleConfig.from_env()
+            ).next_question(
                 decision_point=decision_point,
                 context=QueryContext.model_validate(snapshot["context"]),
                 turns=tuple(turns),

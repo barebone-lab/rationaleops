@@ -1,7 +1,7 @@
 # Recorded Three-Outcome Example
 
 `recorded/` contains the deterministic judge fallback. It produces the same
-three outcomes without a DeepSeek key or DataHub instance:
+three outcomes without an LLM API key or DataHub instance:
 
 - `CONFIRMED_RULE` → active-window SQL acceptance test;
 - `EXPIRED_WORKAROUND` → Germany-filter removal patch and sample regression;

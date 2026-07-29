@@ -1,9 +1,14 @@
-.PHONY: setup demo verify seed-datahub api dashboard video
+.PHONY: setup live-setup demo verify llm-check seed-datahub api dashboard video
 
 setup:
 	uv sync --dev --extra mcp
 	npm --prefix web ci
 	npm --prefix video ci
+	test -f .env || cp .env.example .env
+
+live-setup:
+	uv sync --dev
+	npm --prefix web ci
 	test -f .env || cp .env.example .env
 
 demo:
@@ -17,6 +22,9 @@ verify:
 	npm --prefix web run lint
 	npm --prefix web test
 	npm --prefix video run lint
+
+llm-check:
+	uv run rationaleops llm-check
 
 seed-datahub:
 	uv run rationaleops seed-datahub

@@ -13,6 +13,12 @@ from pathlib import Path
 from rationaleops.datahub_gateway import DataHubSdkWriter, load_demo_context
 from rationaleops.datahub_mcp import DataHubMcpReader
 from rationaleops.full_workflow import run_recorded_full_demo
+from rationaleops.llm import (
+    LLMConfigurationError,
+    LLMResponseError,
+    OpenAICompatibleConfig,
+    OpenAICompatibleCTAAgent,
+)
 from rationaleops.mining import mine_decision_points
 from rationaleops.models import DecisionContract, MutationApproval
 from rationaleops.workflow import run_recorded_vertical_slice
@@ -149,6 +155,11 @@ def _build_parser() -> argparse.ArgumentParser:
         type=Path,
         default=Path(".rationaleops/live-writeback"),
     )
+
+    subparsers.add_parser(
+        "llm-check",
+        help="make one small request to verify an OpenAI-compatible LLM",
+    )
     return parser
 
 
@@ -270,6 +281,24 @@ def _run_writeback_datahub(args: argparse.Namespace) -> int:
     return 0
 
 
+def _run_llm_check() -> int:
+    try:
+        config = OpenAICompatibleConfig.from_env()
+        print(f"Provider: {config.provider}")
+        print(f"Base URL: {config.display_base_url}")
+        print(f"Model: {config.model}")
+        print("Sending one small Chat Completions JSON request...")
+        result = OpenAICompatibleCTAAgent(config).smoke_test()
+    except (LLMConfigurationError, LLMResponseError, ValueError) as exc:
+        print(f"LLM check failed: {exc}")
+        print("See docs/LLM_API_SETUP.md for provider settings and troubleshooting.")
+        return 1
+    print("LLM check passed")
+    print(f"JSON transport: {result.json_transport}")
+    print("Your API key was not printed or stored by this check.")
+    return 0
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     parser = _build_parser()
     args = parser.parse_args(argv)
@@ -285,5 +314,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         return _run_inspect_datahub(args)
     if args.command == "writeback-datahub":
         return _run_writeback_datahub(args)
+    if args.command == "llm-check":
+        return _run_llm_check()
     parser.error(f"unknown command: {args.command}")
     return 2

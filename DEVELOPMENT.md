@@ -492,48 +492,47 @@ The LLM may draft a patch. Deterministic tools must run tests, linting, compilat
 - DataHub SDK or GraphQL for approved write-back
 - Pydantic typed contracts
 - SQLite for local interview state
-- DeepSeek API through an OpenAI-compatible client
+- OpenAI-compatible Chat Completions client with provider capability fallbacks
 
 ### LLM provider configuration
 
-RationaleOps uses **DeepSeek V4-Pro**. The official API model identifier is `deepseek-v4-pro`, and the OpenAI-compatible base URL is `https://api.deepseek.com`.
+RationaleOps accepts any text model endpoint implementing OpenAI Chat
+Completions. Provider selection is runtime configuration rather than an
+application-code branch.
 
 Local configuration lives in `.env`:
 
 ```dotenv
-DEEPSEEK_API_KEY=<secret>
-DEEPSEEK_BASE_URL=https://api.deepseek.com
-DEEPSEEK_MODEL=deepseek-v4-pro
-DEEPSEEK_THINKING_ENABLED=true
-DEEPSEEK_REASONING_EFFORT=high
+LLM_PROVIDER=My provider
+LLM_API_KEY=<secret>
+LLM_BASE_URL=https://provider.example/v1
+LLM_MODEL=<chat-completions-model-id>
+LLM_JSON_MODE=auto
 ```
 
 Configuration rules:
 
 - Never commit `.env` or expose the API key in documentation, logs, screenshots, fixtures, or demo recordings.
 - Commit only `.env.example`, which contains a placeholder key.
-- Read the key with `os.environ["DEEPSEEK_API_KEY"]`; fail fast with a clear setup message when it is missing.
-- Read the model and base URL from environment variables rather than hard-coding them in application code.
-- Enable thinking mode for interview planning, contradiction analysis, and contract drafting.
+- Require an explicit model ID and fail fast on missing or placeholder configuration.
+- Keep provider, model, base URL, optional headers, query parameters, and vendor body fields in environment variables.
+- Send only the common `model` and `messages` fields by default. Add reasoning, thinking, and token-limit fields only when configured.
+- In `auto` JSON mode, try native `response_format` and fall back to prompt-only JSON when a compatible server rejects that optional field.
 - Use JSON output or typed validation for Decision Contract drafts.
 - Preserve multi-turn application messages locally because the Chat Completions API is stateless.
 - Do not store or display model reasoning content. Persist only user-visible answers, tool calls, evidence references, and confirmed fields.
-- Keep a deterministic recorded mode so judges can run the hero demo without a DeepSeek key.
+- Keep a deterministic recorded mode so judges can run the hero demo without an LLM key.
+- Preserve the former `DEEPSEEK_*` variables as a backward-compatible fallback.
 
-Reference client initialization:
+The live credential check is deliberately explicit and makes one small real
+request:
 
-```python
-import os
-
-from openai import OpenAI
-
-client = OpenAI(
-    api_key=os.environ["DEEPSEEK_API_KEY"],
-    base_url=os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com"),
-)
-
-model = os.getenv("DEEPSEEK_MODEL", "deepseek-v4-pro")
+```bash
+make llm-check
 ```
+
+See [the judge-facing LLM setup and switching guide](docs/LLM_API_SETUP.md) for
+the complete compatibility contract and provider-specific escape hatches.
 
 ### Frontend
 

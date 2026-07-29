@@ -286,20 +286,19 @@ Without the API, the dashboard remains fully usable in deterministic recorded
 mode. With the API connected, interviews, confirmations, artifact approvals,
 and write-back receipts are persisted in SQLite.
 
-### DeepSeek agent
+### Bring your own LLM (optional)
 
-RationaleOps uses DeepSeek V4-Pro through its OpenAI-compatible API:
+Any provider or local server implementing OpenAI Chat Completions can power the
+live interview. The recorded demo still needs no key.
 
-```dotenv
-DEEPSEEK_API_KEY=replace-with-your-deepseek-api-key
-DEEPSEEK_BASE_URL=https://api.deepseek.com
-DEEPSEEK_MODEL=deepseek-v4-pro
-DEEPSEEK_THINKING_ENABLED=true
-DEEPSEEK_REASONING_EFFORT=high
+```bash
+make live-setup                    # backend + dashboard + ignored .env
+# Edit LLM_API_KEY, LLM_BASE_URL, LLM_MODEL, and LLM_PROVIDER in .env
+make llm-check                     # one small real request; never prints the key
 ```
 
-`.env` is ignored by Git. Never commit API keys, sensitive interviews,
-production metadata, or private fixtures.
+Then run the API and dashboard above and choose **LIVE AGENT**. See the concise
+[judge setup, provider examples, switching guide, and troubleshooting](docs/LLM_API_SETUP.md).
 
 ## What ships today
 
@@ -307,7 +306,7 @@ production metadata, or private fixtures.
 |---|---|
 | Deterministic SQL decision mining and stable fingerprints | SQLGlot-based miner |
 | Transparent knowledge-risk ranking | Fixture-backed graph scoring |
-| Adaptive owner interviews | Recorded and live DeepSeek paths |
+| Adaptive owner interviews | Recorded and live OpenAI-compatible paths |
 | Authorization-gated Decision Contracts | Typed Pydantic models and transition guards |
 | Operational actions | SQL tests, documentation updates, and repair patches |
 | Deterministic verification | DuckDB tests and sample regression comparisons |

@@ -21,7 +21,10 @@ def _client(tmp_path: Path) -> TestClient:
 def test_api_health_reflects_loaded_runtime_configuration(
     tmp_path: Path, monkeypatch
 ) -> None:
-    monkeypatch.setenv("DEEPSEEK_API_KEY", "test-only-key")
+    monkeypatch.setenv("LLM_API_KEY", "test-only-key")
+    monkeypatch.setenv("LLM_BASE_URL", "https://gateway.example/v1")
+    monkeypatch.setenv("LLM_MODEL", "judge-model")
+    monkeypatch.setenv("LLM_PROVIDER", "Judge LLM")
     monkeypatch.setenv("DATAHUB_GMS_URL", "http://localhost:8080")
 
     response = _client(tmp_path).get("/api/health")
@@ -30,10 +33,31 @@ def test_api_health_reflects_loaded_runtime_configuration(
     assert response.json() == {
         "status": "ok",
         "service": "rationaleops",
-        "version": "0.2.0",
+        "version": "0.3.0",
         "datahub_server": "http://localhost:8080",
-        "deepseek_configured": True,
+        "llm": {
+            "configured": True,
+            "provider": "Judge LLM",
+            "model": "judge-model",
+            "base_url": "https://gateway.example/v1",
+            "json_mode": "auto",
+            "source": "llm",
+            "configuration_error": None,
+        },
     }
+
+
+def test_api_health_rejects_placeholder_as_configured(
+    tmp_path: Path, monkeypatch
+) -> None:
+    monkeypatch.setenv("LLM_API_KEY", "replace-with-your-api-key")
+    monkeypatch.setenv("OPENAI_API_KEY", "replace-with-your-api-key")
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "replace-with-your-api-key")
+
+    llm = _client(tmp_path).get("/api/health").json()["llm"]
+
+    assert llm["configured"] is False
+    assert "LLM_API_KEY" in llm["configuration_error"]
 
 
 def test_api_exposes_complete_recorded_snapshot(tmp_path: Path) -> None:
