@@ -13,6 +13,9 @@ wheels/
 # macOS
 .DS_Store
 
+# Local demo-video source and rendered media
+/video/
+
 # Virtual environments
 .venv
 
