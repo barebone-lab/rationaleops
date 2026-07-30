@@ -10,7 +10,7 @@
   <p>
     <a href="https://barebone-lab.github.io/rationaleops/"><strong>Open dashboard</strong></a>
     ·
-    <a href="video/out/rationaleops-demo.mp4"><strong>Watch the 120-second demo</strong></a>
+    <a href="https://youtu.be/8SbVJBPWxgY"><strong>Watch the 120-second demo</strong></a>
     ·
     <a href="#quick-start"><strong>Run it locally</strong></a>
   </p>
@@ -26,11 +26,11 @@
   </p>
 </div>
 
-<a href="https://barebone-lab.github.io/rationaleops/">
-  <img src="video/public/dashboard-initial.png" alt="RationaleOps dashboard showing DataHub context, ranked SQL decision points, and an evidence-linked owner interview" />
+<a href="https://youtu.be/8SbVJBPWxgY">
+  <img src="https://i.ytimg.com/vi/8SbVJBPWxgY/maxresdefault.jpg" alt="Watch the 120-second RationaleOps demo: three filters, three different truths" />
 </a>
 
-<p align="center"><em>Three filters. Three different truths. Click the dashboard to explore the recorded workflow.</em></p>
+<p align="center"><em>Three filters. Three different truths. Click the thumbnail to watch the 120-second demo.</em></p>
 
 ## The problem
 
@@ -137,7 +137,7 @@ uv run rationaleops mine
 uv run pytest
 uv run ruff check src tests
 
-# Install Python, dashboard, MCP, and video dependencies
+# Install Python, dashboard, and MCP dependencies
 make setup
 
 # Run the complete verification suite
@@ -286,20 +286,19 @@ Without the API, the dashboard remains fully usable in deterministic recorded
 mode. With the API connected, interviews, confirmations, artifact approvals,
 and write-back receipts are persisted in SQLite.
 
-### DeepSeek agent
+### Bring your own LLM (optional)
 
-RationaleOps uses DeepSeek V4-Pro through its OpenAI-compatible API:
+Any provider or local server implementing OpenAI Chat Completions can power the
+live interview. The recorded demo still needs no key.
 
-```dotenv
-DEEPSEEK_API_KEY=replace-with-your-deepseek-api-key
-DEEPSEEK_BASE_URL=https://api.deepseek.com
-DEEPSEEK_MODEL=deepseek-v4-pro
-DEEPSEEK_THINKING_ENABLED=true
-DEEPSEEK_REASONING_EFFORT=high
+```bash
+make live-setup                    # backend + dashboard + ignored .env
+# Edit LLM_API_KEY, LLM_BASE_URL, LLM_MODEL, and LLM_PROVIDER in .env
+make llm-check                     # one small real request; never prints the key
 ```
 
-`.env` is ignored by Git. Never commit API keys, sensitive interviews,
-production metadata, or private fixtures.
+Then run the API and dashboard above and choose **LIVE AGENT**. See the concise
+[judge setup, provider examples, switching guide, and troubleshooting](docs/LLM_API_SETUP.md).
 
 ## What ships today
 
@@ -307,13 +306,13 @@ production metadata, or private fixtures.
 |---|---|
 | Deterministic SQL decision mining and stable fingerprints | SQLGlot-based miner |
 | Transparent knowledge-risk ranking | Fixture-backed graph scoring |
-| Adaptive owner interviews | Recorded and live DeepSeek paths |
+| Adaptive owner interviews | Recorded and live OpenAI-compatible paths |
 | Authorization-gated Decision Contracts | Typed Pydantic models and transition guards |
 | Operational actions | SQL tests, documentation updates, and repair patches |
 | Deterministic verification | DuckDB tests and sample regression comparisons |
 | DataHub integration | Official MCP reads plus SDK write/read verification |
 | Interactive workflow | FastAPI, SQLite audit events, and a three-pane dashboard |
-| Reproducible submission | GitHub Pages dashboard and a committed 120-second video |
+| Reproducible submission | GitHub Pages dashboard and a linked 120-second YouTube demo |
 
 See the complete [Definition of Done](DEVELOPMENT.md#20-definition-of-done) and
 [test strategy](DEVELOPMENT.md#16-test-strategy).
@@ -325,7 +324,6 @@ See the complete [Definition of Done](DEVELOPMENT.md#20-definition-of-done) and
 ├── src/rationaleops/             # Agent workflow, contracts, integrations, and API
 ├── tests/                        # Unit and end-to-end safety tests
 ├── web/                          # Interactive dashboard and GitHub Pages build
-├── video/                        # Remotion source and 120-second demo
 ├── skills/rationale-audit/       # Reusable DataHub rationale-audit skill
 ├── examples/recorded/            # Contracts, interviews, actions, and receipts
 ├── docs/                         # Hackathon brief and user-pain research
@@ -362,7 +360,7 @@ Decision Contract format, and reproducible fixtures that other teams can extend.
 - [Hackathon brief](docs/HACKATHON_BRIEF.md)
 - [User-pain research](docs/USER_PAIN_RESEARCH.md)
 - [Dashboard setup](web/README.md)
-- [Demo video source](video/README.md)
+- [Demo video on YouTube](https://youtu.be/8SbVJBPWxgY)
 
 ## License
 

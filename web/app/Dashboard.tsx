@@ -18,6 +18,12 @@ type Stage = {
 
 type StageMap = Record<string, Stage>;
 type Panel = "contract" | "action" | "evidence";
+type LLMStatus = {
+  configured: boolean;
+  provider: string | null;
+  model: string | null;
+  configuration_error: string | null;
+};
 
 const apiBase = process.env.NEXT_PUBLIC_RATIONALEOPS_API_URL?.replace(/\/$/, "");
 
@@ -71,6 +77,7 @@ export function Dashboard() {
   const [apiState, setApiState] = useState<"recorded" | "checking" | "connected">(
     apiBase ? "checking" : "recorded",
   );
+  const [llmStatus, setLlmStatus] = useState<LLMStatus | null>(null);
   const [notice, setNotice] = useState("Recorded evidence loaded. No API key required.");
   const [liveAnswer, setLiveAnswer] = useState("");
   const [liveTurns, setLiveTurns] = useState<Record<string, Turn[]>>({});
@@ -92,12 +99,18 @@ export function Dashboard() {
         if (!response.ok) throw new Error("API unavailable");
         return response.json();
       })
-      .then(() => {
+      .then((health: { llm: LLMStatus }) => {
         setApiState("connected");
-        setNotice("FastAPI + SQLite connected. Approval events will be persisted.");
+        setLlmStatus(health.llm);
+        setNotice(
+          health.llm.configured
+            ? `FastAPI connected. ${health.llm.provider} / ${health.llm.model} is configured for live interview turns.`
+            : "FastAPI connected in recorded mode. Configure LLM_* to enable the live agent.",
+        );
       })
       .catch(() => {
         setApiState("recorded");
+        setLlmStatus(null);
         setNotice("API unavailable; deterministic recorded mode remains fully usable.");
       });
   }, []);
@@ -125,6 +138,17 @@ export function Dashboard() {
         ? "Evidence boundary complete. The owner can now confirm the structured draft."
         : "Answer recorded with a stable evidence reference.",
     );
+  }
+
+  function selectLiveMode() {
+    setMode("live");
+    if (apiState !== "connected") {
+      setNotice("Start the local API and set NEXT_PUBLIC_RATIONALEOPS_API_URL to use live mode.");
+    } else if (!llmStatus?.configured) {
+      setNotice(llmStatus?.configuration_error ?? "Configure LLM_API_KEY, LLM_BASE_URL, and LLM_MODEL, then restart the API.");
+    } else {
+      setNotice(`Live interview will use ${llmStatus.provider} / ${llmStatus.model}.`);
+    }
   }
 
   async function confirmContract() {
@@ -194,7 +218,11 @@ export function Dashboard() {
     const answer = liveAnswer.trim();
     if (!answer) return;
     if (apiState !== "connected") {
-      setNotice("Set NEXT_PUBLIC_RATIONALEOPS_API_URL to use live DeepSeek mode.");
+      setNotice("Start the API and set NEXT_PUBLIC_RATIONALEOPS_API_URL to use live mode.");
+      return;
+    }
+    if (!llmStatus?.configured) {
+      setNotice(llmStatus?.configuration_error ?? "Configure LLM_* before using live mode.");
       return;
     }
     setBusy(true);
@@ -217,7 +245,7 @@ export function Dashboard() {
         })),
       }));
       setLiveAnswer("");
-      setNotice("DeepSeek returned one typed adaptive probe; reasoning content was discarded.");
+      setNotice(`${llmStatus.provider} returned one typed adaptive probe; reasoning content was discarded.`);
     } catch (error) {
       setNotice(error instanceof Error ? error.message : "Live interview failed.");
     } finally {
@@ -265,7 +293,9 @@ export function Dashboard() {
         <div className="header-actions">
           <div className={`system-pill ${apiState}`}>
             <i />
-            {apiState === "connected" ? "API + DATAHUB LIVE" : "RECORDED GRAPH"}
+            {apiState === "connected"
+              ? llmStatus?.configured ? "API + LLM CONFIGURED" : "API · RECORDED"
+              : "RECORDED GRAPH"}
           </div>
           <button className="icon-button" onClick={resetDemo} aria-label="Reset demo" title="Reset demo">
             <Icon name="reset" />
@@ -359,7 +389,7 @@ export function Dashboard() {
             </div>
             <div className="mode-toggle" role="group" aria-label="Interview mode">
               <button className={mode === "recorded" ? "active" : ""} onClick={() => setMode("recorded")}>RECORDED</button>
-              <button className={mode === "live" ? "active" : ""} onClick={() => setMode("live")}>LIVE AGENT</button>
+              <button className={mode === "live" ? "active" : ""} onClick={selectLiveMode}>LIVE AGENT</button>
             </div>
           </div>
           <div className="outcome-banner">
@@ -384,7 +414,7 @@ export function Dashboard() {
             ) : (
               <form className="live-form" onSubmit={submitLiveAnswer}>
                 <label htmlFor="live-answer">Owner answer</label>
-                <div><input id="live-answer" value={liveAnswer} onChange={(event) => setLiveAnswer(event.target.value)} placeholder="Explain the incident, boundary, or trigger…" /><button disabled={busy || apiState !== "connected"}>ASK NEXT</button></div>
+                <div><input id="live-answer" value={liveAnswer} onChange={(event) => setLiveAnswer(event.target.value)} placeholder="Explain the incident, boundary, or trigger…" /><button disabled={busy || apiState !== "connected" || !llmStatus?.configured}>ASK NEXT</button></div>
               </form>
             )}
           </div>

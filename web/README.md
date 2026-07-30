@@ -27,8 +27,9 @@ npm run dev
 ```
 
 The recorded workflow is embedded so the site remains usable without services.
-To persist actions through the Python API and enable live DeepSeek interview
-turns, start `uv run rationaleops-api` at the repository root, then run:
+To persist actions through the Python API and enable live OpenAI-compatible
+interview turns, follow [the LLM setup guide](../docs/LLM_API_SETUP.md), start
+`uv run rationaleops-api` at the repository root, then run:
 
 ```bash
 NEXT_PUBLIC_RATIONALEOPS_API_URL=http://127.0.0.1:8000 npm run dev

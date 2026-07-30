@@ -110,3 +110,29 @@ def test_live_writer_payload_contains_verified_contract_identity(
     assert properties["rationaleops.contract_id"] == verified_contract.id
     assert properties["rationaleops.status"] == "CONFIRMED"
     assert properties["rationaleops.verification_passed"] == "true"
+
+
+def test_live_writer_readback_requires_every_contract_property(
+    verified_contract: DecisionContract,
+) -> None:
+    expected = DataHubSdkWriter._contract_properties(verified_contract)
+
+    assert (
+        DataHubSdkWriter._mismatched_property_keys(
+            expected=expected,
+            persisted=expected,
+        )
+        == ()
+    )
+
+    persisted = dict(expected)
+    persisted["rationaleops.owner"] = "urn:li:corpGroup:wrong-owner"
+    persisted.pop("rationaleops.verification_artifacts")
+
+    assert DataHubSdkWriter._mismatched_property_keys(
+        expected=expected,
+        persisted=persisted,
+    ) == (
+        "rationaleops.owner",
+        "rationaleops.verification_artifacts",
+    )

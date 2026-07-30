@@ -13,7 +13,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, ConfigDict, Field
 
 from rationaleops.datahub_mcp import DataHubMcpReader
-from rationaleops.llm import DeepSeekConfigurationError, DeepSeekResponseError
+from rationaleops.llm import (
+    LLMConfigurationError,
+    LLMResponseError,
+    llm_configuration_status,
+)
 from rationaleops.service import (
     DEFAULT_SESSION_ID,
     RationaleOpsService,
@@ -61,7 +65,7 @@ def create_app(
     )
     application = FastAPI(
         title="RationaleOps API",
-        version="0.2.0",
+        version="0.3.0",
         description=(
             "Human-grounded decision contracts for business logic discovered "
             "through DataHub."
@@ -81,12 +85,13 @@ def create_app(
 
     @application.get("/api/health")
     def health() -> dict[str, object]:
+        llm = llm_configuration_status()
         return {
             "status": "ok",
             "service": "rationaleops",
             "version": application.version,
             "datahub_server": os.getenv("DATAHUB_GMS_URL", "http://localhost:8080"),
-            "deepseek_configured": bool(os.getenv("DEEPSEEK_API_KEY")),
+            "llm": llm.model_dump(mode="json"),
         }
 
     @application.get("/api/demo")
@@ -121,7 +126,7 @@ def create_app(
             )
         except WorkflowNotFoundError as exc:
             raise HTTPException(status_code=404, detail=str(exc)) from exc
-        except (DeepSeekConfigurationError, DeepSeekResponseError) as exc:
+        except (LLMConfigurationError, LLMResponseError) as exc:
             raise HTTPException(status_code=502, detail=str(exc)) from exc
 
     @application.post("/api/contracts/{contract_id}/confirm")

@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-# RationaleOps — Launch with live DeepSeek LLM
+# RationaleOps — Launch recorded mode or any configured OpenAI-compatible LLM
 # Double-click this file to start both backend and frontend.
 # The browser opens automatically once the frontend is ready.
 
@@ -48,7 +48,9 @@ if ! kill -0 $API_PID 2>/dev/null; then
 fi
 
 HEALTH=$(curl -s http://127.0.0.1:8000/api/health)
-echo -e "${GREEN}✓ API ready:${NC} $(echo "$HEALTH" | python3 -c "import sys,json; d=json.load(sys.stdin); print(f'deepseek_configured={d[\"deepseek_configured\"]}')" 2>/dev/null || echo "$HEALTH")"
+LLM_SUMMARY=$(echo "$HEALTH" | python3 -c 'import sys,json; d=json.load(sys.stdin); x=d["llm"]; print("configured={} provider={} model={}".format(x["configured"], x.get("provider") or "none", x.get("model") or "none"))' 2>/dev/null || echo "$HEALTH")
+LLM_CONFIGURED=$(echo "$HEALTH" | python3 -c 'import sys,json; print(str(json.load(sys.stdin)["llm"]["configured"]).lower())' 2>/dev/null || echo false)
+echo -e "${GREEN}✓ API ready:${NC} $LLM_SUMMARY"
 
 # ---- Frontend (Next.js / vinext) ----
 echo ""
@@ -82,7 +84,11 @@ echo -e "${GREEN}═════════════════════
 echo -e "${GREEN}  RationaleOps is running!${NC}"
 echo -e "${GREEN}  Backend:  http://127.0.0.1:8000${NC}"
 echo -e "${GREEN}  Frontend: http://localhost:3000${NC}"
-echo -e "${GREEN}  LLM:      DeepSeek V4-Pro (live)${NC}"
+if [ "$LLM_CONFIGURED" = "true" ]; then
+  echo -e "${GREEN}  LLM:      configured (run 'make llm-check' to verify)${NC}"
+else
+  echo -e "${YELLOW}  LLM:      not configured — recorded mode remains available${NC}"
+fi
 echo -e "${GREEN}══════════════════════════════════════════${NC}"
 echo ""
 echo "Press Ctrl+C to stop both servers."
