@@ -10,7 +10,7 @@
   <p>
     <a href="https://barebone-lab.github.io/rationaleops/"><strong>Open dashboard</strong></a>
     ·
-    <a href="https://youtu.be/8SbVJBPWxgY"><strong>Watch the 120-second demo</strong></a>
+    <a href="https://youtu.be/FmB1oG62aEA"><strong>Watch the 120-second demo</strong></a>
     ·
     <a href="#quick-start"><strong>Run it locally</strong></a>
   </p>
@@ -26,8 +26,8 @@
   </p>
 </div>
 
-<a href="https://youtu.be/8SbVJBPWxgY">
-  <img src="https://i.ytimg.com/vi/8SbVJBPWxgY/maxresdefault.jpg" alt="Watch the 120-second RationaleOps demo: three filters, three different truths" />
+<a href="https://youtu.be/FmB1oG62aEA">
+  <img src="https://i.ytimg.com/vi/FmB1oG62aEA/maxresdefault.jpg" alt="Watch the 120-second RationaleOps demo: three filters, three different truths" />
 </a>
 
 <p align="center"><em>Three filters. Three different truths. Click the thumbnail to watch the 120-second demo.</em></p>
@@ -360,7 +360,7 @@ Decision Contract format, and reproducible fixtures that other teams can extend.
 - [Hackathon brief](docs/HACKATHON_BRIEF.md)
 - [User-pain research](docs/USER_PAIN_RESEARCH.md)
 - [Dashboard setup](web/README.md)
-- [Demo video on YouTube](https://youtu.be/8SbVJBPWxgY)
+- [Demo video on YouTube](https://youtu.be/FmB1oG62aEA)
 
 ## License
 
