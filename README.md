@@ -27,7 +27,7 @@
 </div>
 
 <a href="https://youtu.be/FmB1oG62aEA">
-  <img src="https://i.ytimg.com/vi/FmB1oG62aEA/maxresdefault.jpg" alt="Watch the 120-second RationaleOps demo: three filters, three different truths" />
+  <img src="docs/demo-thumbnail.png" alt="Watch the 120-second RationaleOps demo: SQL tests, patches, and context diff" />
 </a>
 
 <p align="center"><em>Three filters. Three different truths. Click the thumbnail to watch the 120-second demo.</em></p>
