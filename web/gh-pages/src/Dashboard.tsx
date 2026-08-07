@@ -1,12 +1,11 @@
 /// <reference types="vite/client" />
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   DEMO_ACTOR,
   decisions,
   graphNodes,
   type DemoDecision,
-  type Turn,
 } from "./demo-data";
 
 type Stage = {
@@ -18,12 +17,6 @@ type Stage = {
 
 type StageMap = Record<string, Stage>;
 type Panel = "contract" | "action" | "evidence";
-type LLMStatus = {
-  configured: boolean;
-  provider: string | null;
-  model: string | null;
-  configuration_error: string | null;
-};
 
 const apiBase = import.meta.env.VITE_RATIONALEOPS_API_URL?.replace(/\/$/, "");
 
@@ -73,14 +66,7 @@ export function Dashboard() {
   const [selectedId, setSelectedId] = useState(decisions[0].id);
   const [stages, setStages] = useState<StageMap>(initialStages);
   const [panel, setPanel] = useState<Panel>("contract");
-  const [mode, setMode] = useState<"recorded" | "live">("recorded");
-  const [apiState, setApiState] = useState<"recorded" | "checking" | "connected">(
-    apiBase ? "checking" : "recorded",
-  );
-  const [llmStatus, setLlmStatus] = useState<LLMStatus | null>(null);
   const [notice, setNotice] = useState("Recorded evidence loaded. No API key required.");
-  const [liveAnswer, setLiveAnswer] = useState("");
-  const [liveTurns, setLiveTurns] = useState<Record<string, Turn[]>>({});
   const [busy, setBusy] = useState(false);
 
   const selected = useMemo(
@@ -88,32 +74,7 @@ export function Dashboard() {
     [selectedId],
   );
   const stage = stages[selected.id];
-  const visibleTurns = mode === "live"
-    ? (liveTurns[selected.id] ?? selected.turns.slice(0, 1))
-    : selected.turns.slice(0, stage.revealed);
-
-  useEffect(() => {
-    if (!apiBase) return;
-    fetch(`${apiBase}/api/health`)
-      .then((response) => {
-        if (!response.ok) throw new Error("API unavailable");
-        return response.json();
-      })
-      .then((health: { llm: LLMStatus }) => {
-        setApiState("connected");
-        setLlmStatus(health.llm);
-        setNotice(
-          health.llm.configured
-            ? `FastAPI connected. ${health.llm.provider} / ${health.llm.model} is configured for live interview turns.`
-            : "FastAPI connected in recorded mode. Configure LLM_* to enable the live agent.",
-        );
-      })
-      .catch(() => {
-        setApiState("recorded");
-        setLlmStatus(null);
-        setNotice("API unavailable; deterministic recorded mode remains fully usable.");
-      });
-  }, []);
+  const visibleTurns = selected.turns.slice(0, stage.revealed);
 
   function updateStage(id: string, change: Partial<Stage>) {
     setStages((current) => ({
@@ -125,7 +86,7 @@ export function Dashboard() {
   function selectDecision(id: string) {
     setSelectedId(id);
     setPanel("contract");
-    if (apiState === "connected") {
+    if (apiBase) {
       void callApi(`/api/decisions/${id}/select`).catch(() => undefined);
     }
   }
@@ -138,17 +99,6 @@ export function Dashboard() {
         ? "Evidence boundary complete. The owner can now confirm the structured draft."
         : "Answer recorded with a stable evidence reference.",
     );
-  }
-
-  function selectLiveMode() {
-    setMode("live");
-    if (apiState !== "connected") {
-      setNotice("Start the local API and set VITE_RATIONALEOPS_API_URL to use live mode.");
-    } else if (!llmStatus?.configured) {
-      setNotice(llmStatus?.configuration_error ?? "Configure LLM_API_KEY, LLM_BASE_URL, and LLM_MODEL, then restart the API.");
-    } else {
-      setNotice(`Live interview will use ${llmStatus.provider} / ${llmStatus.model}.`);
-    }
   }
 
   async function confirmContract() {
@@ -213,54 +163,12 @@ export function Dashboard() {
     }
   }
 
-  async function submitLiveAnswer(event: React.FormEvent) {
-    event.preventDefault();
-    const answer = liveAnswer.trim();
-    if (!answer) return;
-    if (apiState !== "connected") {
-      setNotice("Start the API and set VITE_RATIONALEOPS_API_URL to use live mode.");
-      return;
-    }
-    if (!llmStatus?.configured) {
-      setNotice(llmStatus?.configuration_error ?? "Configure LLM_* before using live mode.");
-      return;
-    }
-    setBusy(true);
-    try {
-      const snapshot = await callApi(`/api/interviews/${selected.id}/answer`, {
-        answer,
-        mode: "live",
-      });
-      const turns = snapshot.live_interviews[selected.id].turns as Array<{
-        role: "agent" | "owner";
-        content: string;
-        evidence_ref: string;
-      }>;
-      setLiveTurns((current) => ({
-        ...current,
-        [selected.id]: turns.map((turn) => ({
-          role: turn.role,
-          content: turn.content,
-          evidence: turn.evidence_ref,
-        })),
-      }));
-      setLiveAnswer("");
-      setNotice(`${llmStatus.provider} returned one typed adaptive probe; reasoning content was discarded.`);
-    } catch (error) {
-      setNotice(error instanceof Error ? error.message : "Live interview failed.");
-    } finally {
-      setBusy(false);
-    }
-  }
-
   function resetDemo() {
     setStages(initialStages());
     setSelectedId(decisions[0].id);
     setPanel("contract");
-    setMode("recorded");
-    setLiveTurns({});
     setNotice("Demo reset to owner-stated drafts. No authoritative context published.");
-    if (apiState === "connected") {
+    if (apiBase) {
       void callApi("/api/demo/reset").catch(() => undefined);
     }
   }
@@ -291,11 +199,9 @@ export function Dashboard() {
           <strong>REVENUE_DAILY</strong>
         </div>
         <div className="header-actions">
-          <div className={`system-pill ${apiState}`}>
+          <div className="system-pill">
             <i />
-            {apiState === "connected"
-              ? llmStatus?.configured ? "API + LLM CONFIGURED" : "API · RECORDED"
-              : "RECORDED GRAPH"}
+            RECORDED GRAPH
           </div>
           <button className="icon-button" onClick={resetDemo} aria-label="Reset demo" title="Reset demo">
             <Icon name="reset" />
@@ -387,10 +293,7 @@ export function Dashboard() {
               <span className="eyebrow">03 · COGNITIVE INVESTIGATION</span>
               <h2>{selected.label}</h2>
             </div>
-            <div className="mode-toggle" role="group" aria-label="Interview mode">
-              <button className={mode === "recorded" ? "active" : ""} onClick={() => setMode("recorded")}>RECORDED</button>
-              <button className={mode === "live" ? "active" : ""} onClick={selectLiveMode}>LIVE AGENT</button>
-            </div>
+            <span className="recorded-badge">RECORDED DEMO</span>
           </div>
           <div className="outcome-banner">
             <span className={`outcome-icon ${selected.outcome.toLowerCase()}`}>{selected.outcome === "CONFIRMED_RULE" ? "✓" : selected.outcome === "EXPIRED_WORKAROUND" ? "!" : "↻"}</span>
@@ -407,15 +310,8 @@ export function Dashboard() {
                 </article>
               ))}
             </div>
-            {mode === "recorded" ? (
-              stage.revealed < selected.turns.length && (
-                <button className="continue-button" onClick={revealNext}>Continue recorded interview <Icon name="arrow" /></button>
-              )
-            ) : (
-              <form className="live-form" onSubmit={submitLiveAnswer}>
-                <label htmlFor="live-answer">Owner answer</label>
-                <div><input id="live-answer" value={liveAnswer} onChange={(event) => setLiveAnswer(event.target.value)} placeholder="Explain the incident, boundary, or trigger…" /><button disabled={busy || apiState !== "connected" || !llmStatus?.configured}>ASK NEXT</button></div>
-              </form>
+            {stage.revealed < selected.turns.length && (
+              <button className="continue-button" onClick={revealNext}>Continue recorded interview <Icon name="arrow" /></button>
             )}
           </div>
 
