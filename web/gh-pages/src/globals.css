@@ -43,9 +43,7 @@ svg { display: block; }
   padding: 0 22px;
   border-bottom: 1px solid var(--line);
   background: rgba(16, 22, 18, .96);
-  position: sticky;
-  top: 0;
-  z-index: 20;
+  position: static;
 }
 
 .brand-lockup, .header-actions, .dataset-crumb { display: flex; align-items: center; }
@@ -86,9 +84,10 @@ svg { display: block; }
 .story-metric strong { color: var(--acid); font: 500 40px/1 var(--font-mono); letter-spacing: -.08em; }
 .story-metric span { color: var(--muted); font: 550 9px/1.35 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
 
-.workspace-grid { display: grid; grid-template-columns: minmax(260px, .82fr) minmax(315px, 1fr) minmax(430px, 1.35fr); flex: 1; min-height: 720px; }
-.pane { min-width: 0; border-right: 1px solid var(--line); }
-.pane:last-child { border-right: 0; }
+.workspace-grid { display: block; flex: 1; min-height: 0; }
+.pane { min-width: 0; border-bottom: 1px solid var(--line); }
+.pane + .pane { border-top: 8px solid #0b100c; }
+.pane:last-child { border-bottom: 0; }
 .pane-heading, .investigation-header { min-height: 73px; display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 15px 18px; border-bottom: 1px solid var(--line-soft); }
 .pane-heading h2, .investigation-header h2 { margin: 5px 0 0; font-size: 17px; font-weight: 580; letter-spacing: -.025em; }
 .source-badge, .count-badge { display: flex; align-items: center; gap: 5px; color: var(--cyan); border: 1px solid rgba(100, 216, 220, .28); height: 25px; padding: 0 8px; font: 600 8px/1 var(--font-mono); letter-spacing: .08em; }
@@ -97,7 +96,7 @@ svg { display: block; }
 
 .impact-pane { background: rgba(20, 27, 22, .88); }
 .graph-wrap { padding: 5px 8px 10px; border-bottom: 1px solid var(--line-soft); }
-.impact-graph { width: 100%; height: auto; max-height: 410px; color: var(--muted-2); overflow: visible; }
+.impact-graph { width: 100%; max-width: 760px; height: auto; max-height: 520px; margin: 0 auto; color: var(--muted-2); overflow: visible; }
 .graph-lines line { stroke: currentColor; stroke-width: 1; stroke-dasharray: 4 5; marker-end: url(#arrowhead); }
 .graph-node circle { fill: var(--ink-2); stroke: var(--line); stroke-width: 1.5; }
 .graph-node text { fill: var(--muted); font: 600 9px var(--font-mono); }
@@ -237,24 +236,13 @@ svg { display: block; }
 .golden-checks span svg { width: 11px; color: var(--acid); }
 .golden-checks strong { color: var(--cyan); padding-left: 12px; border-left: 1px solid var(--line); }
 
-@media (max-width: 1320px) {
-  .workspace-grid { grid-template-columns: 320px minmax(400px, 1fr); }
-  .impact-pane { grid-row: span 2; }
-  .decision-pane { border-right: 0; }
-  .investigation-pane { grid-column: 2; border-top: 1px solid var(--line); }
-  .impact-graph { max-height: 450px; }
-}
-
 @media (max-width: 780px) {
-  .topbar { position: static; height: auto; min-height: 64px; grid-template-columns: 1fr auto; padding: 10px 14px; }
+  .topbar { height: auto; min-height: 64px; grid-template-columns: 1fr auto; padding: 10px 14px; }
   .dataset-crumb { display: none; }
   .system-pill { display: none; }
   .story-strip { grid-template-columns: 1fr auto; gap: 12px; padding: 18px 14px; }
   .story-strip > p { grid-column: 1 / -1; grid-row: 2; }
-  .workspace-grid { display: block; }
-  .pane { border-right: 0; border-bottom: 1px solid var(--line); }
   .sql-file pre { white-space: pre-wrap; overflow-wrap: anywhere; }
-  .investigation-pane { border-top: 0; }
   .statusbar { position: static; grid-template-columns: 1fr; padding: 10px 14px; }
   .golden-checks { flex-wrap: wrap; gap: 8px 12px; }
 }
