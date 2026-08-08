@@ -25,6 +25,18 @@ wheels/
 !/video/public/music/
 /video/public/music/*
 !/video/public/music/bg-music.mp3
+!/video/public/narration/
+/video/public/narration/*
+!/video/public/narration/01-hook.wav
+!/video/public/narration/02-context.wav
+!/video/public/narration/03-workflow.wav
+!/video/public/narration/04-interview.wav
+!/video/public/narration/05-outcomes.wav
+!/video/public/narration/06-artifacts.wav
+!/video/public/narration/07-trust.wav
+!/video/public/narration/08-proof.wav
+!/video/public/narration/09-close.wav
+!/video/public/narration/10-end-credits.wav
 
 # Virtual environments
 .venv

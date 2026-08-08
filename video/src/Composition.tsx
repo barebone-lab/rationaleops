@@ -1,7 +1,7 @@
 import type { CSSProperties, ReactNode } from "react";
+import { Audio } from "@remotion/media";
 import {
   AbsoluteFill,
-  Audio,
   Easing,
   Img,
   interpolate,
@@ -417,12 +417,12 @@ const EndCreditsScene = ({ duration }: { duration: number }) => {
 export const RationaleOpsVideo = () => {
   const { fps } = useVideoConfig();
   const scenes = {
-    hook: 12 * fps,
-    context: 12 * fps,
-    radar: 10 * fps,
+    hook: 11 * fps,
+    context: 11 * fps,
+    radar: 14 * fps,
     interview: 14 * fps,
-    outcomes: 13 * fps,
-    artifactScreenshot: 9 * fps,
+    outcomes: 12 * fps,
+    artifactScreenshot: 8 * fps,
     artifacts: 11 * fps,
     trust: 10 * fps,
     proof: 10 * fps,
@@ -435,12 +435,47 @@ export const RationaleOpsVideo = () => {
     from += duration;
     return <Sequence key={start} from={start} durationInFrames={duration}>{child}</Sequence>;
   };
-  // ── Background music ─────────────────────────────────────────
-  // Mixkit royalty-free track — no attribution required.
-  // To try other tracks, download from mixkit.co and replace
-  // public/music/bg-music.mp3, then adjust the filename here.
-  // ──────────────────────────────────────────────────────────────
-  const musicVolume = 0.18;
+  const narrationTracks = [
+    { file: "01-hook.wav", start: 0.5, duration: 9.3 },
+    { file: "02-context.wav", start: 11.4, duration: 10.1 },
+    { file: "03-workflow.wav", start: 22.3, duration: 13.65 },
+    { file: "04-interview.wav", start: 36.4, duration: 12.75 },
+    { file: "05-outcomes.wav", start: 50.4, duration: 10.85 },
+    { file: "06-artifacts.wav", start: 62.4, duration: 10.75 },
+    { file: "07-trust.wav", start: 81.3, duration: 9.35 },
+    { file: "08-proof.wav", start: 91.5, duration: 7.65 },
+    { file: "09-close.wav", start: 101.5, duration: 7.95 },
+    { file: "10-end-credits.wav", start: 110.4, duration: 8.95 },
+  ];
+  const narrationWindows = narrationTracks.map((track) => ({
+    start: Math.round(track.start * fps),
+    end: Math.round((track.start + track.duration) * fps),
+  }));
+  const musicVolume = (frame: number) => {
+    const normal = 0.14;
+    const ducked = 0.035;
+    const ramp = Math.round(0.2 * fps);
+    let volume = normal;
+
+    for (const window of narrationWindows) {
+      if (frame >= window.start - ramp && frame <= window.end + ramp) {
+        volume = Math.min(
+          volume,
+          interpolate(
+            frame,
+            [window.start - ramp, window.start, window.end, window.end + ramp],
+            [normal, ducked, ducked, normal],
+            { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+          ),
+        );
+      }
+    }
+
+    return volume * interpolate(frame, [118 * fps, 120 * fps], [1, 0], {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+    });
+  };
 
   return (
     <AbsoluteFill style={{ backgroundColor: COLORS.ink }}>
@@ -449,7 +484,18 @@ export const RationaleOpsVideo = () => {
         src={staticFile("music/bg-music.mp3")}
         volume={musicVolume}
         loop
+        loopVolumeCurveBehavior="extend"
       />
+      {narrationTracks.map((track) => (
+        <Sequence
+          key={track.file}
+          from={Math.round(track.start * fps)}
+          durationInFrames={Math.ceil(track.duration * fps)}
+          layout="none"
+        >
+          <Audio src={staticFile(`narration/${track.file}`)} volume={1} />
+        </Sequence>
+      ))}
       {/* ── scenes ── */}
       {place(scenes.hook, <HookScene duration={scenes.hook} />)}
       {place(scenes.context, <ContextScene duration={scenes.context} />)}
