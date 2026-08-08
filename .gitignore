@@ -13,8 +13,18 @@ wheels/
 # macOS
 .DS_Store
 
-# Local demo-video source and rendered media
-/video/
+# Demo-video build caches and non-release media
+/video/node_modules/
+/video/build/
+/video/narration/
+/video/out/*
+!/video/out/rationaleops-demo.mp4
+/video/public/*
+!/video/public/dashboard-initial.png
+!/video/public/dashboard-action.png
+!/video/public/music/
+/video/public/music/*
+!/video/public/music/bg-music.mp3
 
 # Virtual environments
 .venv
